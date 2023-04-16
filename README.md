@@ -6,13 +6,17 @@ Dies ist das Spiel '4-Gewinnt' auf einer LED Matrix mit Touchbedienung als Proje
 
 #Todo: Was tut das Programm
 
-
-
 ## Wie man das projekt nuzt
+
+ESP32 mit Micropython
+
+Visual Studio Code mit pymakr
 
 Zunächst muss die Hardware Gebaut werden. Mehr dazu folgt...
 
+## Todo
 
+Idee: jeder spieler wählt seine Farbe, HSV und Hue durch die äußeren Touch sensoren verändern
 
 ## Einkaufsliste
 
@@ -31,3 +35,75 @@ Gesamtkosten ca. 75-80 Euro ohne versand.
 ## Weitere Ressourcen
 
 - [Touch Sensor - ESP32 - &mdash; ESP-IDF Programming Guide latest documentation](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/touch_pad.html)
+
+- [Micropython ESP Handbuch](https://docs.micropython.org/en/latest/esp32/quickref.html#neopixel-and-apa106-driver)
+
+- [ESP32 einrichten in VSCODE](https://draeger-it.blog/visual-studio-code-fuer-micropython-einrichten/)
+
+- [GitHub - v923z/micropython-ulab: a numpy-like fast vector module for micropython, circuitpython, and their derivatives](https://github.com/v923z/micropython-ulab)
+
+## Mircopython aufsetzten
+
+Zunächst wird Micropython mit ulab (wie Numpy nur für uC) aufgesetzt. Da es keinen fertigen Build gibt, muss er selbst erstellt werden. Zunächst wird ein Ordner angelegt, welcher kein Leerzeichen enthaten darf:
+
+```bash
+mkdir micropython-ulab && cd micropython-ulab
+```
+
+Folgender Code funktioniert unter Unix Systemen, es muss jedoch ``CMake > 3.12`` installiert sein:
+
+```bash
+export BUILD_DIR=$(pwd)
+
+git clone https://github.com/v923z/micropython-ulab.git ulab
+git clone https://github.com/micropython/micropython.git
+
+cd $BUILD_DIR/micropython/
+
+git clone -b v4.2.1 --recursive https://github.com/espressif/esp-idf.git
+
+
+cd esp-idf
+./install.sh
+. ./export.sh
+```
+
+Damit werden die benötigten Abhängigkeiten heruntergeladen und die ESP-IDF installiert. 
+
+Anschließend wird der micropython cross-compiler und die ESP Submodule erstellt:
+
+```bash
+cd $BUILD_DIR/micropython/mpy-cross
+make
+cd $BUILD_DIR/micropython/ports/esp32
+make submodules
+```
+
+Im Verzeichnis ``$BUILD_DIR/micropython/ports/esp32`` wird das alte ``Makefile `` gespeichert: 
+
+```bash
+mv Makefile MakefileOld
+```
+
+ Ein neues Makefile mit folgendem Inhalt wird erstellt und mit ``make`` ausgeführt:
+
+```bash
+BOARD = GENERIC
+USER_C_MODULES = $(BUILD_DIR)/ulab/code/micropython.cmake
+
+include MakefileOld
+```
+
+```bash
+make
+```
+
+Es wird ein neues Verzeichnis ``build`` erstellt, aus dem die Dateien ``bootloader.bin``, ``partition-table.bin`` und ``micropython.bin`` kopiert werden.
+
+Anschließend wird mit ``esptool `` der ESP Flash bereinigt und die neue Firmware auf den ESP geflashed:
+
+```bash
+esptool.py -p (PORT) erase_flash
+
+esptool.py -p (PORT) -b 460800 --before default_reset --after hard_reset --chip esp32  write_flash --flash_mode dio --flash_size detect --flash_freq 40m 0x1000 bootloader.bin 0x8000 partition-table.bin 0x10000 micropython.bin
+```
