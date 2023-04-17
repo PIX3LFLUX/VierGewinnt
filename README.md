@@ -44,7 +44,11 @@ Gesamtkosten ca. 75-80 Euro ohne versand.
 
 ## Mircopython aufsetzten
 
-Zunächst wird Micropython mit ulab (wie Numpy nur für uC) aufgesetzt. Da es keinen fertigen Build gibt, muss er selbst erstellt werden. Zunächst wird ein Ordner angelegt, welcher kein Leerzeichen enthaten darf:
+Micropython mit ulab ist wie Numpy nur für Mircocontroller. Einen fertig compilierten Build gibt es im Ordner ``firmware``.
+
+Zum selber erstellen wird wie folgt vorgegangen: 
+
+Zunächst wird ein Ordner angelegt, welcher kein Leerzeichen enthaten darf:
 
 ```bash
 mkdir micropython-ulab && cd micropython-ulab
