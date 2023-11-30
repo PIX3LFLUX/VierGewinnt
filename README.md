@@ -119,15 +119,7 @@ esptool.py -p (PORT) -b 460800 --before default_reset --after hard_reset --chip 
 
 ## Bilder
 
-![_DSF9845.JPG](C:\Users\cedri\Uni\FH\Projektarbeit\kleineBilder\_DSF9845.JPG)
-
-![_DSF9847.JPG](C:\Users\cedri\Uni\FH\Projektarbeit\kleineBilder\_DSF9847.JPG)
-
-![_DSF9844.JPG](C:\Users\cedri\Uni\FH\Projektarbeit\kleineBilder\_DSF9844.JPG)
-
-![_DSF9843.JPG](C:\Users\cedri\Uni\FH\Projektarbeit\kleineBilder\_DSF9843.JPG)
-
-![_DSF9842.JPG](C:\Users\cedri\Uni\FH\Projektarbeit\kleineBilder\_DSF9842.JPG)
+![Bilder](/bilder/_DSF9847.JPG?raw=true "Bild1")
 
 ![_DSF9840.JPG](C:\Users\cedri\Uni\FH\Projektarbeit\kleineBilder\_DSF9840.JPG)
 
