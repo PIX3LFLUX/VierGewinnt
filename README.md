@@ -110,4 +110,27 @@ Anschließend wird mit ``esptool `` der ESP Flash bereinigt und die neue Firmwar
 esptool.py -p (PORT) erase_flash
 
 esptool.py -p (PORT) -b 460800 --before default_reset --after hard_reset --chip esp32  write_flash --flash_mode dio --flash_size detect --flash_freq 40m 0x1000 bootloader.bin 0x8000 partition-table.bin 0x10000 micropython.bin
+
 ```
+
+
+
+
+
+## Bilder
+
+![_DSF9845.JPG](C:\Users\cedri\Uni\FH\Projektarbeit\kleineBilder\_DSF9845.JPG)
+
+![_DSF9847.JPG](C:\Users\cedri\Uni\FH\Projektarbeit\kleineBilder\_DSF9847.JPG)
+
+![_DSF9844.JPG](C:\Users\cedri\Uni\FH\Projektarbeit\kleineBilder\_DSF9844.JPG)
+
+![_DSF9843.JPG](C:\Users\cedri\Uni\FH\Projektarbeit\kleineBilder\_DSF9843.JPG)
+
+![_DSF9842.JPG](C:\Users\cedri\Uni\FH\Projektarbeit\kleineBilder\_DSF9842.JPG)
+
+![_DSF9840.JPG](C:\Users\cedri\Uni\FH\Projektarbeit\kleineBilder\_DSF9840.JPG)
+
+![_DSF9839.JPG](C:\Users\cedri\Uni\FH\Projektarbeit\kleineBilder\_DSF9839.JPG)
+
+![_DSF9838.JPG](C:\Users\cedri\Uni\FH\Projektarbeit\kleineBilder\_DSF9838.JPG)
