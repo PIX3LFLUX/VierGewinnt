@@ -1,60 +1,98 @@
-from machine import Pin, TouchPad
+from machine import Pin
 from neopixel import NeoPixel
 from ulab import numpy as np
+import time
+import spiellogik
 
-#### allgemeine Definitionen
-
-anzahlReihen = 6
-anzahlPixel = anzahlReihen*7
+anzahlPixel = 6*7
 
 #### Touch Sensoren
 # Pin 0, 2, 4, 12, 13 14, 15, 27, 32, 33
 # Eingang gegen 0 --> gedrückt. Eingang über 1000 --> nicht gedrückt
 
-touch_schwelle = 600
+#touch_schwelle = 600
 
 
-eingang_touch_0 = TouchPad(Pin(15)) 
-eingang_touch_1 = TouchPad(Pin(2))
-eingang_touch_2 = TouchPad(Pin(4))
-eingang_touch_3 = TouchPad(Pin(12))
-eingang_touch_4 = TouchPad(Pin(13))
-eingang_touch_5 = TouchPad(Pin(14)) 
+#eingang_touch_0 = TouchPad(Pin(15)) 
+#eingang_touch_1 = TouchPad(Pin(2))
+#eingang_touch_2 = TouchPad(Pin(4))
+#eingang_touch_3 = TouchPad(Pin(12))
+#eingang_touch_4 = TouchPad(Pin(13))
+#eingang_touch_5 = TouchPad(Pin(14)) 
+#eingang_touch_6 = TouchPad(Pin(15)) 
 
 #### Ende Touch Sensoren
 
-#### Neo Pixel
+### Taster
 
+# TODO: Pin Zuordnung prüfen
+
+eingang_0 = Pin(15, Pin.IN, Pin.PULL_UP) 
+eingang_1 = Pin(2, Pin.IN, Pin.PULL_UP)
+eingang_2 = Pin(4, Pin.IN, Pin.PULL_UP)
+eingang_3 = Pin(12, Pin.IN, Pin.PULL_UP)
+eingang_4 = Pin(13, Pin.IN, Pin.PULL_UP)
+eingang_5 = Pin(14, Pin.IN, Pin.PULL_UP)
+eingang_6 = Pin(16, Pin.IN, Pin.PULL_UP)
+
+### Zeitvariablen für Taster zum entprellen
+
+vergangene_zeit = 0
+button_delay = 30 # ms
+
+### Ende Taster
+
+
+
+#### Neo Pixel
 pixel_pin = Pin(0, Pin.OUT)   # GPIO0 als Ausgang für NeoPixel
-pixel = NeoPixel(pixel_pin, anzahlPixel, "GRB") # Farbmodell anpassen   
+pixel = NeoPixel(pixel_pin, anzahlPixel, bpp=4) # Farbmodell anpassen   
 
 
 #### Ende Neo Pixel
 
 
+### def states
+
+naechsterSpieler = {"spieler1" : "spieler2", "spieler2" : "spieler1"}
+status = {"spieler" : "spieler1"}
+
+farbe_spieler = {"spieler1" : 0, "spieler2" : 0}
+
+### end states
 
 
-farbe_spieler_1 = pixel.colorHSV(0, 255, 255) # rot
-farbe_spieler_2 = pixel.colorHSV(43691, 255, 255) # blau
+### Funktion zum Entprellen
+#def button_handler(pin):
+#    global vergangene_zeit, button_delay
+    
+#    if time.ticks_ms() < vergangene_zeit:
+#        return
+   
+#    vergangene_zeit = time.ticks_ms() + button_delay
 
 
-spielfeld = np.zeros(6, 7, dtype=int)
 
+
+farbe_spieler["spieler2"] = pixel.colorHSV(0, 255, 255) # rot
+farbe_spieler["spieler1"] = pixel.colorHSV(43691, 255, 255) # blau
+
+spielfeld = spiellogik.Spielffeld()
 
 def update_neopixel():
     # array zerlegen
-    ausgabe = spielfeld.flatten() # macht reihenweise, also erst oberste reihe, dann zweite hintendran usw.
+    ausgabe = spielfeld.spielfeld.flatten() # macht reihenweise, also erst oberste reihe, dann zweite hintendran usw.
 
     # Wenn Wert gleich 1 --> Farbe spieler 1
     x = np.where(ausgabe == 1)
     for index in x:
-        pixel[index] = farbe_spieler_1
+        pixel[index] = farbe_spieler["spieler1"]
     
 
     # Wenn Wert gleich 2 --> Farbe spieler 2
     x = np.where(ausgabe == 2)
     for index in x:
-        pixel[index] = farbe_spieler_2
+        pixel[index] = farbe_spieler["spieler2"]
 
     
     # pixel senden
@@ -64,7 +102,7 @@ def update_neopixel():
 
 def reset_matrix():
 
-    # TODO Spielfeld darf nicht schwarz sein, da man das durch das Plexiglas nicht sieht. Vorschlag: Grau oder Weiß
+    spielfeld.reset()
 
     pixel.fill(0)
     pixel.write()
@@ -112,18 +150,86 @@ def init_game():
     # alles zurücksetzten
 
     reset_matrix()
-    spielfeld = np.zeros(6, 7, dtype=int)
 
-    # farben einlesen
-    
-    farbe_spieler_1 = get_player_color()
-    farbe_spieler_2 = get_player_color()
+    # TODO: farben einlesen
+
+    #farbe_spieler["spieler1"] = get_player_color()
+    #farbe_spieler["spieler2"] = get_player_color()
 
     # start Game
 
+    
 
     # end game
 
 
+
+    return
+
+def get_spalte():
+
+    global button_delay
+
+    spalte = -1
+
+    while spalte == -1:
+        if eingang_0.value() == 0:
+            spalte = 0
+        elif eingang_1.value() == 0:
+            spalte = 1
+        elif eingang_2.value() == 0:
+            spalte = 2
+        elif eingang_3.value() == 0:
+            spalte = 3
+        elif eingang_4.value() == 0:
+            spalte = 4
+        elif eingang_5.value() == 0:
+            spalte = 5
+        elif eingang_6.value() == 0:
+            spalte = 6
+
+    time.sleep(button_delay)  # warte die Zeit, um zu entprellen
+    # TODO: Bessere Entrpellung als per delay
+
+    return spalte
+
+
+def spielzug():
+    spieler = status["spieler"]     # wer ist dran?
+
+
+    # warte auf Eingabe einer Spalte
+    gespielte_spalte = get_spalte()
+
+    # übergib Spalte an Spiellogik
+
+    ergebnis = spielfeld.drop(spieler, gespielte_spalte)
+
+    # prüfe ob gewonnen
+
+    if (ergebnis == 1):
+        # aktueller Spieler hat gewonnen
+        time.sleep(1000)
+
+        pixel.fill(farbe_spieler[spieler])
+        pixel.write()
+
+        naechstesSpiel()
+
+
+    else:
+        # nicht gewonnen -> nächster spieler
+        status["spieler"] = naechsterSpieler[spieler]
+        update_neopixel()
+
+    return
+
+
+
+def naechstesSpiel():
+    # TODO: warte auf Eingabe (z.B. 2 Taster) und starte erneut
+
+    while(1):
+        time.sleep(1000)
 
     return
