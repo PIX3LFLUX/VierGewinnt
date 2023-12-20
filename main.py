@@ -6,6 +6,23 @@ import spiellogik
 
 anzahlPixel = 6*7
 
+
+# Zustände
+ZUSTAND_INIT = "init"
+ZUSTAND_SPIELER_WAHELEN = "spieler_waehlen"
+ZUSTAND_SPIELEN = "spielen"
+ZUSTAND_GEWONNEN = "gewonnen"
+
+aktueller_zustand = ZUSTAND_INIT
+
+
+naechsterSpieler = {"spieler1" : "spieler2", "spieler2" : "spieler1"}
+status = {"spieler" : "spieler1"}
+
+farbe_spieler = {"spieler1" : 0, "spieler2" : 0}
+
+
+
 #### Touch Sensoren
 # Pin 0, 2, 4, 12, 13 14, 15, 27, 32, 33
 # Eingang gegen 0 --> gedrückt. Eingang über 1000 --> nicht gedrückt
@@ -48,18 +65,7 @@ button_delay = 30 # ms
 pixel_pin = Pin(0, Pin.OUT)   # GPIO0 als Ausgang für NeoPixel
 pixel = NeoPixel(pixel_pin, anzahlPixel, bpp=4) # Farbmodell anpassen   
 
-
 #### Ende Neo Pixel
-
-
-### def states
-
-naechsterSpieler = {"spieler1" : "spieler2", "spieler2" : "spieler1"}
-status = {"spieler" : "spieler1"}
-
-farbe_spieler = {"spieler1" : 0, "spieler2" : 0}
-
-### end states
 
 
 ### Funktion zum Entprellen
@@ -145,27 +151,6 @@ def get_player_color(): # lässt Spieler die eigene Farbe definieren
     return farbe
 
 
-def init_game():
-
-    # alles zurücksetzten
-
-    reset_matrix()
-
-    # TODO: farben einlesen
-
-    #farbe_spieler["spieler1"] = get_player_color()
-    #farbe_spieler["spieler2"] = get_player_color()
-
-    # start Game
-
-    
-
-    # end game
-
-
-
-    return
-
 def get_spalte():
 
     global button_delay
@@ -194,16 +179,17 @@ def get_spalte():
     return spalte
 
 
-def spielzug():
+def spielzug() -> bool:
     spieler = status["spieler"]     # wer ist dran?
-
 
     # warte auf Eingabe einer Spalte
     gespielte_spalte = get_spalte()
 
     # übergib Spalte an Spiellogik
 
-    ergebnis = spielfeld.drop(spieler, gespielte_spalte)
+    ergebnis = spielfeld.wurf(spieler, gespielte_spalte)
+
+    update_neopixel()
 
     # prüfe ob gewonnen
 
@@ -214,22 +200,61 @@ def spielzug():
         pixel.fill(farbe_spieler[spieler])
         pixel.write()
 
-        naechstesSpiel()
+        return True
 
 
     else:
         # nicht gewonnen -> nächster spieler
         status["spieler"] = naechsterSpieler[spieler]
-        update_neopixel()
 
-    return
+    return False
 
 
 
 def naechstesSpiel():
-    # TODO: warte auf Eingabe (z.B. 2 Taster) und starte erneut
+    global button_delay
+    # warte auf Eingabe und starte erneut
 
-    while(1):
-        time.sleep(1000)
+    while eingang_0.value() != 0 and eingang_6.value() != 0:
+
+        time.sleep(button_delay)
+
+    while eingang_0.value() == 0 and eingang_6.value() == 0: # warte bis beide Taster wieder gelöst sind
+        time.sleep(button_delay)
 
     return
+
+
+def main():
+    global aktueller_zustand
+    global farbe_spieler
+
+    while 1:
+        if aktueller_zustand == ZUSTAND_INIT:
+            reset_matrix()
+            aktueller_zustand = ZUSTAND_SPIELER_WAHELEN
+
+        elif aktueller_zustand == ZUSTAND_SPIELER_WAHELEN:
+            # spieler wählen Farbe
+
+            # TODO: farben einlesen
+
+            #farbe_spieler["spieler1"] = get_player_color()
+            #farbe_spieler["spieler2"] = get_player_color()
+
+            # spieler wählen PvP oder PvE
+            # TODO:
+
+            aktueller_zustand = ZUSTAND_SPIELEN
+        
+        elif aktueller_zustand == ZUSTAND_SPIELEN:
+            
+            if spielzug():  # True wenn gewonnen, sonst false
+                aktueller_zustand = ZUSTAND_GEWONNEN
+
+        elif aktueller_zustand == ZUSTAND_GEWONNEN:
+            naechstesSpiel()
+            aktueller_zustand = ZUSTAND_INIT
+
+if __name__ == "__main__":
+    main()

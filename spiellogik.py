@@ -1,3 +1,5 @@
+import numpy as np
+
 class Spielfeld():
 
     # Die Klasse Spielfeld füllt automatisch die aktuelle Spalte, in die geworfen wird
@@ -8,20 +10,25 @@ class Spielfeld():
     # Spieler1 = 1,
     # Spieler2 = 2
     #
-    # Für den Sieg wird in den Funktionen nur geprüft, ob irgendwer gewonnen hat. Wer gewonnen hat, wird in der Funktion drop() anhand der übergebenen Spielernummer ermittelt
+    # Für den Sieg wird in den Funktionen nur geprüft, ob irgendwer gewonnen hat. Wer gewonnen hat, wird in der Funktion wurf() anhand der übergebenen Spielernummer ermittelt
+
+
+    # Gewinnmatrixen
+    spieler1Vec = np.array([1,1,1,1])
+    spieler2Vec = np.array([2,2,2,2])
 
 
     def __init__(self):
         self.spielfeld = np.zeros((6,7,), dtype = int)
 
     def _winning_rule(self, arr) -> bool:
-        siegSpieler1 = np.array([1,1,1,1])
-        siegSpieler2 = np.array([2,2,2,2])
+        spieler1Vec = np.array([1,1,1,1])
+        spieler2Vec = np.array([2,2,2,2])
 
         sub_arrays = [arr[i:i+4] for i in range(len(arr) -3)]
 
-        siegSpieler1 = any([np.array_equal(win1rule,sub) for sub in sub_arrays])
-        siegSpieler2 = any([np.array_equal(win2rule,sub) for sub in sub_arrays])
+        siegSpieler1 = any([np.array_equal(spieler1Vec,sub) for sub in sub_arrays])
+        siegSpieler2 = any([np.array_equal(spieler2Vec,sub) for sub in sub_arrays])
 
         if siegSpieler1 or siegSpieler2:
             return True
@@ -31,53 +38,68 @@ class Spielfeld():
 
 
         
-    def _get_diagonals(self, _table, zeile, spalte) -> list:     # gibt die Diagonalen zurück, welche den angegebenen Pixel enthalten
-        diags = []
-        diags.append(np.diagonal(_table, offset=(spalte - zeile)))
-        diags.append(np.diagonal(np.rot90(_table), offset=-_table.shape[1] + (spalte+zeile)+1))
-        return diags
+    def _gib_diagonal(self, _table, zeile, spalte) -> list:     # gibt die Diagonalen zurück, welche den angegebenen Pixel enthalten
+        diagonalen = []
+        diagonalen.append(np.diagonal(_table, offset=(spalte - zeile)))
+        diagonalen.append(np.diagonal(np.rot90(_table), offset=-_table.shape[1] + (spalte+zeile)+1))
+        return diagonalen
     
 
 
-    def _get_axes(self, _table, zeile, spalte) -> list:         # gibt die Zeilen und Spalten zurück, in den der aktuelle Pixel enthalten ist
-        axes = []
-        axes.append(_table[zeile,:])                            # gibt die ganze Zeile zurück
-        axes.append(_table[:,spalte])                           # gibt die ganze Spalte zurück
-        return axes
+    def _gib_gerade(self, _table, zeile, spalte) -> list:         # gibt die Zeilen und Spalten zurück, in den der aktuelle Pixel enthalten ist
+        schraegen = []
+        schraegen.append(_table[zeile,:])                            # gibt die ganze Zeile zurück
+        schraegen.append(_table[:,spalte])                           # gibt die ganze Spalte zurück
+        return schraegen
 
 
-    def _winning_check(self, zeile, spalte) -> bool:
+    def _pruefe_gewonnen(self, zeile, spalte) -> bool:
 
         # bekommt alle Zeilen, Spalten und Diagonalen als Vektoren und überprüft dann, ob in einem dieser Vektoren 4 mal die Gleiche Zahl (Spielerzahl) hinternander steckt
 
-        all_arr = []
-        all_arr.extend(self._get_diagonals(self.spielfeld, zeile, spalte))
-        all_arr.extend(self._get_axes(self.spielfeld, zeile, spalte))
+        global spieler1Vec
+        global spieler2Vec
 
-        for arr in all_arr:
-            winner = self._winning_rule(arr)
-            if winner:
+        alle_reihen = [] # Array an Arrays mit unterschiedlicher Länge
+        alle_reihen.extend(self._gib_diagonal(self.spielfeld, zeile, spalte))
+        alle_reihen.extend(self._gib_gerade(self.spielfeld, zeile, spalte))
+
+        
+        # zerlege das Array in die einzelnen unterschiedlich langen Arrays
+
+        for reihen in alle_reihen:
+
+            # zerlege nun das eine Array in einzelne Arrays, welche je 4 Pixel lang sind
+            vierer_reihen = [reihen[i:i+4] for i in range(len(reihen) -3)]
+
+            for eine_vierer_reihe in vierer_reihen:
+                siegSpieler1 = any([np.array_equal(spieler1Vec,eine_vierer_reihe) for eine_vierer_reihe in vierer_reihen])
+                siegSpieler2 = any([np.array_equal(spieler2Vec,eine_vierer_reihe) for eine_vierer_reihe in vierer_reihen])
+
+            if siegSpieler1 or siegSpieler2:
                 return True
             else:
                 pass
+
+        return False
     
 
 
-    def drop(self, spieler, spalte):
+    def wurf(self, spieler, spalte):
 
         spalten_vec = self.spielfeld[:,spalte]      # kopiere die aktuelle Spalte in einen Vektor, um damit zu arbeiten
         non_zero = np.where(spalten_vec != 0)[0]    # zählt, wo nicht null ist. Damit muss an der Stelle dann gefüllt werden
 
-        if non_zero.size == 0:                      # 
+        if non_zero.size == 0:                      
             zeile = self.spielfeld.shape[0]-1
             self.spielfeld[zeile,spalte] = spieler
 
-        else:                                       # 
+        else:                                       
             zeile = non_zero[0]-1
             self.spielfeld[zeile,spalte] = spieler
 
 
-        if self._winning_check(zeile, spalte):
+        if self._pruefe_gewonnen(zeile, spalte):
             return 1
         else:
             return self.spielfeld
