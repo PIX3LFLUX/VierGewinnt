@@ -2,23 +2,45 @@
 
 ## Projektbeschreibung
 
-Dies ist das Spiel '4-Gewinnt' auf einer LED Matrix mit Touchbedienung als Projektarbeit an der Hochschule Karlsruhe.
+Dies ist eine Implementierung des Spiels '4-Gewinnt' auf einer LED Matrix im Rahmen einer Projektarbeit an der Hochschule Karlsruhe. Die einzelnen Spalten werden über Taster ausgewählt. Die Außenmaße der dargestellten Lösung betragen circa 1 m x 1 m.
 
-#Todo: Was tut das Programm
+## Was wird benötigt
 
-## Wie man das projekt nuzt
+Beschreibung | Menge | Kosten
+-------- | -------- | --------
+ESP32S3 Dev Board   | 1   | ca. 10 €
+LEDs (WS2812b / Neopixel)   | 42 LEDs   | ca. 15 €
+opakes Acrylglas (2 mm) | 1 m x 1 m | ca. 20 €
+Rahmenholz 12 cm x 1.8 cm | ca. 4 lfd m | ca x €
+KG Wasserrohr 125 mm | ca. 3 m | 12 €
+Rückplatte aus Sperrholz / Spahnplatte | 1 m x 1 m | ca. 25 €
+Schrauben, Kleber, Winkel | - | - 
+5V Netzteil (min. 3 A) | - | -
+Kabel | | 
 
-ESP32 mit Micropython
+Werkzeuge wie Säge, Akkuschrauber und Lötkolben sollten natürlich ebenfalls vorhanden sein.
 
-Visual Studio Code mit pymakr
+Das Rohr wirkt als Begrenzung des Lichts, damit der Spielstein später als rund gesehen wird. Anhand des Durchmessers lässt sich die Gesamtgröße des Spiels definieren.
+Als Rückplatte haben wir zwei Möbelbauplatten (100 cm x 60 cm) verwendet, diese verwinden sich nicht und reflektieren dank ihrer weißen Beschichtung das Licht sehr gut.
+Als LED Streifen haben wir einen Adafruit Neopixel RGBW Streifen verwendet. Durch beimischen der weißen LED lässt sich ein helleres Licht erzeugen.
+Die Taster wurden auf Unterlegscheiben festgeschraubt, welche mit Silikon in einem passenden Loch verklebt wurden.
 
-Zunächst muss die Hardware Gebaut werden. Mehr dazu folgt...
+## Bau der Hardware
+Wir sind wie folgt vorgegangen:
+1. einzelne LED vom Strip abschneiden und mit 3 Kabeln verbinden. Wir haben jeweils 7 LEDs in einen String verbunden. Auf Aus- / Eingang der LEDs achten! Der Ausgang der letzten LED wird in den Eingang der nächsten Reihe angelötet. Wichtig ist dabei, dass alle Eingänge auf der linken Seite beginnen! _TODO Bild_
+2. KG-Rohr in 3 - 4 cm starke Abschnitte teilen (42 Stück)
+3. Rohrstücken mit Heißkleber zu einer 6x7 Matrix verbinden
+4. Rückplatte auf Maße der Matrix zusenden ![Bilder](/bilder/_DSF9839.JPG?raw=true "Bild1")
+5. LEDs auf Rückplatte aufkleben (wir haben extra starkes Doppelseitiges Klebeband verwendet) 
+6. Alle Strings verbinden. 5V und Masse an einem Ende jedes Strings anlöten. Damit sind nun die Stromversorgungen jedes Strings parallel, die Daten jedoch alle in Reihe geschalten ![Bilder](/bilder/_DSF9842.JPG?raw=true "Bild1")
+7. Rahmen um die Rückplatte herum bauen. Wir haben zum einschieben der Plexiglasplatte mit einem 3 mm Sägeblatt und der Kreissäge eine ca. 8 mm tiefe Nut in die Rahmenhölzer eingelassen. In die obere Rahmenseite die 7 Taster einlassen.
+8. Plexiglasplatte auf Maß bringen, sie muss rundum ca. 5 mm größer als die Rückplatte sein
+9. Plexiglasplatte in die Nut einlassen, Rahmen verkleben ![Bilder](/bilder/_DSF9845.JPG?raw=true "Bild1")
+10. Rohrmatrix von hinten einlassen
+11. Rückwand mit LEDS von hinten einlassen und mit Winkeln gegen ein Rausfallen sichern.
 
-## Todo
 
-Idee: jeder spieler wählt seine Farbe, HSV und Hue durch die äußeren Touch sensoren verändern
 
-## Einkaufsliste
 
 | Beschreibung         | Link                                                                                                                                                                                                                                                                                                                                                                                                             | Bild                                                                                                                         | Preis | Anzhal      |
 | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ----- | ----------- |
@@ -29,6 +51,21 @@ Idee: jeder spieler wählt seine Farbe, HSV und Hue durch die äußeren Touch se
 | Sperrholzplatte      | https://www.bauhaus.info/sperrholzplatten/sperrholzplatte-fixmass/p/14454573                                                                                                                                                                                                                                                                                                                                     | ![](C:\Users\lucas\AppData\Roaming\marktext\images\2023-04-05-18-32-34-image.png)                                            | 11    | 1           |
 
 Ein alltes Handynetzteil für die Stromversorgung wird als vorhanden angebommen. 
+
+## Wie man das projekt nuzt
+
+
+
+ESP32 mit Micropython
+
+Visual Studio Code mit pymakr
+
+Zunächst muss die Hardware Gebaut werden. Mehr dazu folgt...
+
+
+## Einkaufsliste
+
+
 
 Gesamtkosten ca. 75-80 Euro ohne versand.
 
@@ -121,14 +158,14 @@ esptool.py -p (PORT) -b 460800 --before default_reset --after hard_reset --chip 
 
 ![Bilder](/bilder/_DSF9838.JPG?raw=true "Bild1")
 
-![Bilder](/bilder/_DSF9839.JPG?raw=true "Bild1")
+
 
 ![Bilder](/bilder/_DSF9840.JPG?raw=true "Bild1")
 
-![Bilder](/bilder/_DSF9842.JPG?raw=true "Bild1")
+
 
 ![Bilder](/bilder/_DSF9843.JPG?raw=true "Bild1")
 ![Bilder](/bilder/_DSF9844.JPG?raw=true "Bild1")
-![Bilder](/bilder/_DSF9845.JPG?raw=true "Bild1")
+
 
 ![Bilder](/bilder/_DSF9847.JPG?raw=true "Bild1")
