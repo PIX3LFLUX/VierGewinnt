@@ -39,19 +39,6 @@ Wir sind wie folgt vorgegangen:
 10. Rohrmatrix von hinten einlassen
 11. Rückwand mit LEDS von hinten einlassen und mit Winkeln gegen ein Rausfallen sichern.
 
-
-
-
-| Beschreibung         | Link                                                                                                                                                                                                                                                                                                                                                                                                             | Bild                                                                                                                         | Preis | Anzhal      |
-| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | ----- | ----------- |
-| LED Streifen WS2812b | https://www.amazon.de/BTF-LIGHTING-WS2812B-adressierbare-Streifen-Wasserdicht/dp/B01CDTEBKA/ref=sr_1_7?crid=244G4JRW9ZBJ7&keywords=ws2812b+30+led%2Fm&qid=1680710500&sprefix=ws2812b+%2Caps%2C112&sr=8-7https://www.amazon.de/BTF-LIGHTING-WS2812B-adressierbare-Streifen-Wasserdicht/dp/B01CDTEBKA/ref=sr_1_7?crid=244G4JRW9ZBJ7&keywords=ws2812b+30+led%2Fm&qid=1680710500&sprefix=ws2812b+%2Caps%2C112&sr=8-7 | <img title="" src="file:///C:/Users/lucas/AppData/Roaming/marktext/images/2023-04-05-18-27-04-image.png" alt="" width="111"> | 28    | 1 (42 Leds) |
-| ESP 32               | https://www.amazon.de/AZDelivery-NodeMCU-Development-Nachfolgermodell-ESP8266/dp/B071P98VTG/ref=sr_1_1_sspa?__mk_de_DE=ÅMÅŽÕÑ&crid=UIGUY09EZS7N&keywords=esp32&qid=1680710547&sprefix=esp32%2Caps%2C118&sr=8-1-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&th=1                                                                                                                                                         | ![](C:\Users\lucas\AppData\Roaming\marktext\images\2023-04-05-18-28-05-image.png)                                            | 11,29 | 1           |
-| Acryglas             | https://www.amazon.de/AtHaus®-Acrylglas-Materialstärke-Milchglas-Plexiglas/dp/B09J3RZKYG/ref=sr_1_11?keywords=plexiglas%2Bmilchig%2B3mm&qid=1680710575&sprefix=plexiglas%2Bmil%2Caps%2C130&sr=8-11&th=1                                                                                                                                                                                                          | ![](C:\Users\lucas\AppData\Roaming\marktext\images\2023-04-05-18-29-53-image.png)                                            | 10    | 1           |
-| Rahmenholz           | https://www.bauhaus.info/latten-rahmen/rahmenholz/p/20756143                                                                                                                                                                                                                                                                                                                                                     | ![](C:\Users\lucas\AppData\Roaming\marktext\images\2023-04-05-18-31-22-image.png)                                            | 15    | 1 (1,8 lfm) |
-| Sperrholzplatte      | https://www.bauhaus.info/sperrholzplatten/sperrholzplatte-fixmass/p/14454573                                                                                                                                                                                                                                                                                                                                     | ![](C:\Users\lucas\AppData\Roaming\marktext\images\2023-04-05-18-32-34-image.png)                                            | 11    | 1           |
-
-Ein alltes Handynetzteil für die Stromversorgung wird als vorhanden angebommen. 
-
 ## Wie man das projekt nuzt
 
 
@@ -60,24 +47,6 @@ ESP32 mit Micropython
 
 Visual Studio Code mit pymakr
 
-Zunächst muss die Hardware Gebaut werden. Mehr dazu folgt...
-
-
-## Einkaufsliste
-
-
-
-Gesamtkosten ca. 75-80 Euro ohne versand.
-
-## Weitere Ressourcen
-
-- [Touch Sensor - ESP32 - &mdash; ESP-IDF Programming Guide latest documentation](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/touch_pad.html)
-
-- [Micropython ESP Handbuch](https://docs.micropython.org/en/latest/esp32/quickref.html#neopixel-and-apa106-driver)
-
-- [ESP32 einrichten in VSCODE](https://draeger-it.blog/visual-studio-code-fuer-micropython-einrichten/)
-
-- [GitHub - v923z/micropython-ulab: a numpy-like fast vector module for micropython, circuitpython, and their derivatives](https://github.com/v923z/micropython-ulab)
 
 ## Mircopython aufsetzten
 
@@ -151,21 +120,14 @@ esptool.py -p (PORT) -b 460800 --before default_reset --after hard_reset --chip 
 ```
 
 
+## Mitwirken
+Ursprünglich sollte die Eingabe mit Touchsensoren erfolgen. Dafür empfiehlt es sich aber, runde Platinenstücke gemäß dem Datenblatt<[Touch Sensor - ESP32 - &mdash; ESP-IDF Programming Guide latest documentation](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/touch_pad.html)> von Espressif anzufertigen und dann mit der Dicke des Isolators zu experimentieren (es wird ein Plattenkondensator realisiert). Gern kann dieses Feature implementiert werden. Auch sind andere Algorithem für eine KI denkbar. 
 
 
+## Weitere Ressourcen
 
-## Bilder
+- [Micropython ESP Handbuch](https://docs.micropython.org/en/latest/esp32/quickref.html#neopixel-and-apa106-driver)
 
-![Bilder](/bilder/_DSF9838.JPG?raw=true "Bild1")
+- [ESP32 einrichten in VSCODE](https://draeger-it.blog/visual-studio-code-fuer-micropython-einrichten/)
 
-
-
-![Bilder](/bilder/_DSF9840.JPG?raw=true "Bild1")
-
-
-
-![Bilder](/bilder/_DSF9843.JPG?raw=true "Bild1")
-![Bilder](/bilder/_DSF9844.JPG?raw=true "Bild1")
-
-
-![Bilder](/bilder/_DSF9847.JPG?raw=true "Bild1")
+- [GitHub - v923z/micropython-ulab: a numpy-like fast vector module for micropython, circuitpython, and their derivatives](https://github.com/v923z/micropython-ulab)
