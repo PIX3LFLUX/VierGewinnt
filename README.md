@@ -47,6 +47,12 @@ ESP32 mit Micropython
 
 Visual Studio Code mit pymakr
 
+Zunächst muss die Notwendige Firmware (micropython mit ulab) auf den ESP Microcontroller geflasht werden. Sie kann aus dem Ordner ``firmware`` gedownloadet werden oder unter [Micropython aufsetzten](https://github.com/SachsenBahner/VierGewinnt?tab=readme-ov-file#mircopython-aufsetzten) selbst erstellt werden.
+
+Anschließend müssen die notwendigen Dateien für das Vier-gewinnt übertragen werden.
+
+Mit einem ``python pyboard.py --device COM15 main.py`` kann nun das Programm ausgeführt werden.
+
 
 ## Mircopython aufsetzten
 
@@ -138,6 +144,24 @@ esptool.py -p /dev/ttyUSB0 -b 460800 --before default_reset --after no_reset --c
 
 Leider funktioniert der Octal PSRAM mit dieser Konfiguration nicht.
 
+
+## Dateien übertragen
+
+Zum Übertragen der am PC erstellten Python Dateien empfiehlt sich das Pyboard Tool. Es werden die beiden Dateien main.py sowie spiellogik.py übetragen. 
+```
+python pyboard.py --device COM15 -f cp VierGewinnt/main.py :
+python pyboard.py --device COM15 -f cp VierGewinnt/spiellogik.py :
+
+python pyboard.py --device COM15 -f ls
+
+ls :
+         139 boot.py
+        6319 main.py
+        4131 spiellogik.py
+
+```
+
+Mit einem ``python pyboard.py --device COM15 main.py`` kann das Programm ausgeführt werden.
 
 ## Mitwirken
 Ursprünglich sollte die Eingabe mit Touchsensoren erfolgen. Dafür empfiehlt es sich aber, runde Platinenstücke gemäß dem [Datenblatt](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/touch_pad.html) von Espressif anzufertigen und dann mit der Dicke des Isolators zu experimentieren (es wird ein Plattenkondensator realisiert). Gern kann dieses Feature implementiert werden. Auch sind andere Algorithem für eine KI denkbar. 
