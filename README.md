@@ -70,7 +70,7 @@ git clone https://github.com/micropython/micropython.git
 
 cd $BUILD_DIR/micropython/
 
-git clone -b v4.2.1 --recursive https://github.com/espressif/esp-idf.git
+git clone -b v5.1.2 --recursive https://github.com/espressif/esp-idf.git
 
 
 cd esp-idf
@@ -89,35 +89,54 @@ cd $BUILD_DIR/micropython/ports/esp32
 make submodules
 ```
 
-Im Verzeichnis ``$BUILD_DIR/micropython/ports/esp32`` wird das alte ``Makefile `` gespeichert: 
+Wir haben das ESP32-S3-Devkit1 Board verwendet. Für dieses gibt es kein fertiges Board. Daher wurde die sdkconfig.board Datei im Ordner ``$BUILD_DIR/micropython/ports/esp32/ESP32_Generic_S3`` wie folgt angepasst:
+
+```
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
+CONFIG_ESPTOOLPY_AFTER_NORESET=y
+CONFIG_ESPTOOLPY_OCT_FLASH=y
+
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=
+CONFIG_ESPTOOLPY_FLASHSIZE_8MB=
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=
+CONFIG_ESPTOOLPY_FLASHSIZE_32MB=y
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions-32MiB.csv"
+```
+
+Im Verzeichnis ``$BUILD_DIR/micropython/ports/esp32`` wird ein neues ``makefile`` erstellt: 
 
 ```bash
-mv Makefile MakefileOld
+nano makefile 
 ```
 
  Ein neues Makefile mit folgendem Inhalt wird erstellt und mit ``make`` ausgeführt:
 
 ```bash
-BOARD = GENERIC
+BOARD = ESP32_GENERIC_S3
 USER_C_MODULES = $(BUILD_DIR)/ulab/code/micropython.cmake
 
-include MakefileOld
+include Makefile
 ```
 
 ```bash
 make
 ```
 
-Es wird ein neues Verzeichnis ``build`` erstellt, aus dem die Dateien ``bootloader.bin``, ``partition-table.bin`` und ``micropython.bin`` kopiert werden.
+Es wird ein neues Verzeichnis ``build`` erstellt, mit den Dateien ``bootloader.bin``, ``partition-table.bin`` und ``micropython.bin``.
 
 Anschließend wird mit ``esptool `` der ESP Flash bereinigt und die neue Firmware auf den ESP geflashed:
 
 ```bash
 esptool.py -p (PORT) erase_flash
 
-esptool.py -p (PORT) -b 460800 --before default_reset --after hard_reset --chip esp32  write_flash --flash_mode dio --flash_size detect --flash_freq 40m 0x1000 bootloader.bin 0x8000 partition-table.bin 0x10000 micropython.bin
+esptool.py -p /dev/ttyUSB0 -b 460800 --before default_reset --after no_reset --chip esp32s3  write_flash --flash_mode dio --flash_size 32MB --flash_freq 80m 0x0 build-ESP32_GENERIC_S3/bootloader/bootloader.bin 0x8000 build-ESP32_GENERIC_S3/partition_table/partition-table.bin 0x10000 build-ESP32_GENERIC_S3/micropython.bin
+
 
 ```
+
+Leider funktioniert der Octal PSRAM mit dieser Konfiguration nicht.
 
 
 ## Mitwirken
