@@ -1,4 +1,8 @@
-import numpy as np
+from ulab import numpy as np
+
+# Gewinnmatrixen
+spieler1Vec = np.array([1,1,1,1], dtype=np.int8)
+spieler2Vec = np.array([2,2,2,2], dtype=np.int8)
 
 class Spielfeld():
 
@@ -13,13 +17,11 @@ class Spielfeld():
     # Für den Sieg wird in den Funktionen nur geprüft, ob irgendwer gewonnen hat. Wer gewonnen hat, wird in der Funktion wurf() anhand der übergebenen Spielernummer ermittelt
 
 
-    # Gewinnmatrixen
-    spieler1Vec = np.array([1,1,1,1])
-    spieler2Vec = np.array([2,2,2,2])
+    
 
 
     def __init__(self):
-        self.spielfeld = np.zeros((6,7,), dtype = int)
+        self.spielfeld = np.zeros((6,7), dtype=np.int8)
 
     def _winning_rule(self, arr) -> bool:
         spieler1Vec = np.array([1,1,1,1])
@@ -40,8 +42,8 @@ class Spielfeld():
         
     def _gib_diagonal(self, _table, zeile, spalte) -> list:     # gibt die Diagonalen zurück, welche den angegebenen Pixel enthalten
         diagonalen = []
-        diagonalen.append(np.diagonal(_table, offset=(spalte - zeile)))
-        diagonalen.append(np.diagonal(np.rot90(_table), offset=-_table.shape[1] + (spalte+zeile)+1))
+        diagonalen.append(np.diag(_table, k=(spalte - zeile)))  # k = Offset, k=0 wäre ganze Diagonale
+        diagonalen.append(np.diag(np.flip(_table, axis=1), k=-_table.shape[1] + (spalte+zeile)+1))  #np.flip(_table, axis=1) = numpy.rot(90)
         return diagonalen
     
 
@@ -72,9 +74,8 @@ class Spielfeld():
             # zerlege nun das eine Array in einzelne Arrays, welche je 4 Pixel lang sind
             vierer_reihen = [reihen[i:i+4] for i in range(len(reihen) -3)]
 
-            for eine_vierer_reihe in vierer_reihen:
-                siegSpieler1 = any([np.array_equal(spieler1Vec,eine_vierer_reihe) for eine_vierer_reihe in vierer_reihen])
-                siegSpieler2 = any([np.array_equal(spieler2Vec,eine_vierer_reihe) for eine_vierer_reihe in vierer_reihen])
+            siegSpieler1 = any([all(spieler1Vec == eine_vierer_reihe) for eine_vierer_reihe in vierer_reihen])
+            siegSpieler2 = any([all(spieler2Vec == eine_vierer_reihe) for eine_vierer_reihe in vierer_reihen])
 
             if siegSpieler1 or siegSpieler2:
                 return True
@@ -88,7 +89,7 @@ class Spielfeld():
     def wurf(self, spieler, spalte):
 
         spalten_vec = self.spielfeld[:,spalte]      # kopiere die aktuelle Spalte in einen Vektor, um damit zu arbeiten
-        non_zero = np.where(spalten_vec != 0)[0]    # zählt, wo nicht null ist. Damit muss an der Stelle dann gefüllt werden
+        non_zero = np.nonzero(spalten_vec)[0]    # zählt, wo nicht null ist. Damit muss an der Stelle dann gefüllt werden
 
         if non_zero.size == 0:                      
             zeile = self.spielfeld.shape[0]-1
@@ -106,4 +107,5 @@ class Spielfeld():
         
 
     def reset(self):                                # setzt das Spielfeld zurück
-        return self.table.fill(0)
+        self.spielfeld = np.zeros((6,7), dtype=np.int8)
+        return self.spielfeld

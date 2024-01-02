@@ -13,11 +13,11 @@ ZUSTAND_SPIELER_WAHELEN = "spieler_waehlen"
 ZUSTAND_SPIELEN = "spielen"
 ZUSTAND_GEWONNEN = "gewonnen"
 
-aktueller_zustand = ZUSTAND_INIT
+aktueller_zustand = ZUSTAND_INIT 
 
 
-naechsterSpieler = {"spieler1" : "spieler2", "spieler2" : "spieler1"}
-status = {"spieler" : "spieler1"}
+naechsterSpieler = {1 : 2, 2 : 1}   # {"spieler1" : "spieler2", "spieler2" : "spieler1"}
+status = {"spieler" : 1}
 
 farbe_spieler = {"spieler1" : 0, "spieler2" : 0}
 
@@ -79,11 +79,10 @@ pixel = NeoPixel(pixel_pin, anzahlPixel, bpp=4) # Farbmodell anpassen
 
 
 
+farbe_spieler["spieler2"] = (255, 0, 0, 128) # rot
+farbe_spieler["spieler1"] = (0, 0, 255, 128) # blau
 
-farbe_spieler["spieler2"] = pixel.colorHSV(0, 255, 255) # rot
-farbe_spieler["spieler1"] = pixel.colorHSV(43691, 255, 255) # blau
-
-spielfeld = spiellogik.Spielffeld()
+spielfeld = spiellogik.Spielfeld()
 
 def update_neopixel():
     # array zerlegen
@@ -118,37 +117,38 @@ def reset_matrix():
 
 def get_player_color(): # lässt Spieler die eigene Farbe definieren
 
-    hue = 0
-    farbe = pixel.colorHSV(hue, 255, 255) 
-    pixel.fill(farbe)
-    pixel.write()
+    #hue = 0
+    #farbe = pixel.colorHSV(hue, 255, 255) 
+    #pixel.fill(farbe)
+    #pixel.write()
 
-    while(eingang_touch_0 > touch_schwelle and eingang_touch_5 > touch_schwelle):  # beide ganz außen gleichzeitig drücken zum starten
-        if eingang_touch_1 < touch_schwelle: # zweites von links geklick, hue -
-            hue -= 500
+    #while(eingang_touch_0 > touch_schwelle and eingang_touch_5 > touch_schwelle):  # beide ganz außen gleichzeitig drücken zum starten
+    #    if eingang_touch_1 < touch_schwelle: # zweites von links geklick, hue -
+    #        hue -= 500
 
             # fake "Overflow", Python kennt keine maximallänge bei Int
-            if hue < 0:
-                hue = 65535
+    #        if hue < 0:
+    #            hue = 65535
 
-            farbe = pixel.colorHSV(hue, 255, 255) 
-            pixel.fill(farbe)
-            pixel.write()
+    #        farbe = pixel.colorHSV(hue, 255, 255) 
+    #        pixel.fill(farbe)
+    #        pixel.write()
 
-        elif eingang_touch_4 < touch_schwelle: # zweites von rechts geklick, hue +
-            hue += 500
+    #    elif eingang_touch_4 < touch_schwelle: # zweites von rechts geklick, hue +
+    #        hue += 500
             
             # fake "Overflow", Python kennt keine maximallänge bei Int
-            if hue > 65535:
-                hue = 0
+    #        if hue > 65535:
+    #            hue = 0
 
-            farbe = pixel.colorHSV(hue, 255, 255) 
-            pixel.fill(farbe)
-            pixel.write()
+    #        farbe = pixel.colorHSV(hue, 255, 255) 
+    #        pixel.fill(farbe)
+    #        pixel.write()
 
-    reset_matrix()
+    #reset_matrix()
 
-    return farbe
+    #return farbe
+    return
 
 
 def get_spalte():
