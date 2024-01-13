@@ -43,7 +43,10 @@ class Spielfeld():
     def _gib_diagonal(self, _table, zeile, spalte) -> list:     # gibt die Diagonalen zurück, welche den angegebenen Pixel enthalten
         diagonalen = []
         diagonalen.append(np.diag(_table, k=(spalte - zeile)))  # k = Offset, k=0 wäre ganze Diagonale
-        diagonalen.append(np.diag(np.flip(_table, axis=1), k=-_table.shape[1] + (spalte+zeile)+1))  #np.flip(_table, axis=1) = numpy.rot(90)
+        diagonalen.append(np.diag(np.flip(_table, axis=1), k=_table.shape[1]-1-spalte - zeile))  #np.flip(_table, axis=1) = numpy.rot(90)  <- TODO: Fehler
+
+        #print("Diagonal: ", np.diag(_table, k=(spalte - zeile)))
+        #print("Diag gedreht: ", np.diag(np.flip(_table, axis=1), k=_table.shape[1]-1-spalte - zeile))
         return diagonalen
     
 
@@ -89,11 +92,19 @@ class Spielfeld():
     def wurf(self, spieler, spalte):
 
         spalten_vec = self.spielfeld[:,spalte]      # kopiere die aktuelle Spalte in einen Vektor, um damit zu arbeiten
-        non_zero = np.nonzero(spalten_vec)[0]    # zählt, wo nicht null ist. Damit muss an der Stelle dann gefüllt werden
+        non_zero = np.nonzero(spalten_vec)[0]       # zählt, wo nicht null ist. Damit muss an der Stelle dann gefüllt werden
+
+        
+        #print("Non_Zero: ", non_zero)
+        #print("Non_Zero Size: ", non_zero.size)
 
         if non_zero.size == 0:                      
             zeile = self.spielfeld.shape[0]-1
             self.spielfeld[zeile,spalte] = spieler
+
+        elif non_zero.size == 6:
+            # spalte voll, nochmal spielen
+            return self.spielfeld, -1
 
         else:                                       
             zeile = non_zero[0]-1
@@ -101,9 +112,18 @@ class Spielfeld():
 
 
         if self._pruefe_gewonnen(zeile, spalte):
-            return 1
+            return self.spielfeld, 1
+        
         else:
-            return self.spielfeld
+            check_spielfeld = self.spielfeld.copy()
+            check_spielfeld.sort(axis=None)
+
+            # prüfe ob spielfeld voll:
+            if check_spielfeld[0] != 0:
+                return self.spielfeld, -2
+            
+            # wenn nicht, weiter spielen
+            return self.spielfeld, 0
         
 
     def reset(self):                                # setzt das Spielfeld zurück
