@@ -21,6 +21,11 @@ status = {"spieler" : 1}
 
 farbe_spieler = {"spieler1" : 0, "spieler2" : 0}
 
+typ_spieler = {"spieler1" : 0, "spieler2" : 0}
+
+led_an_ki = [1, 3, 8, 10, 12, 15, 16, 22, 23, 26, 29, 31, 33, 36, 38, 40]
+led_an_spieler = [2,3,9,11,16,18,23,24,30,37]
+
 
 
 #### Touch Sensoren
@@ -180,6 +185,43 @@ def get_player_color(): # lässt Spieler die eigene Farbe definieren
     #return farbe
     return farbe
 
+def get_player_type(farbe_spieler): # lässt Spieler auswählen ob KI oder Mensch
+    global button_delay, anzahlPixel, led_an_ki, led_an_spieler
+
+    type = 0 # 0 ist Mensch, 1 ist KI
+
+    # beide ganz außen gleichzeitig drücken zum starten
+    while (eingang_0.value() != 0) or (eingang_6.value() != 0):
+        time.sleep(button_delay)
+
+        if eingang_1.value() == 0: # zweites von links geklick
+            type = 0
+
+            for led in led_an_ki:
+                pixel[led] = [0,0,0,0]
+
+            for led in led_an_spieler:
+                pixel[led] = farbe_spieler
+
+        elif eingang_5.value() == 0: # zweites von rechts geklick
+            type = 1
+            
+            for led in led_an_spieler:
+                pixel[led] = [0,0,0,0]
+
+            for led in led_an_ki:
+                pixel[led] = farbe_spieler
+
+        pixel.write()
+        
+    while (eingang_0.value() == 0) or (eingang_6.value() == 0): # warte bis beide Taster wieder gelöst sind
+        time.sleep(button_delay)
+
+    reset_matrix()
+
+    #return farbe
+    return type
+
 
 def get_spalte():
 
@@ -246,7 +288,12 @@ def spielzug() -> bool:
     spieler = status["spieler"]     # wer ist dran?
 
     # warte auf Eingabe einer Spalte
-    gespielte_spalte = get_spalte()
+    if typ_spieler[spieler] == 0: # Mensch
+        gespielte_spalte = get_spalte()
+
+    else: # KI
+        gespielte_spalte = ki.KI(spielfeld.spielfeld, spieler).get_best_move()
+
 
     print("Gespielte Spalte: ", gespielte_spalte)
 
@@ -347,7 +394,8 @@ def main():
             farbe_spieler[1] = get_player_color()
 
             # spieler wählen PvP oder PvE
-            # TODO:
+            typ_spieler[0] = get_player_type(farbe_spieler[0])
+            typ_spieler[1] = get_player_type(farbe_spieler[1])
 
             aktueller_zustand = ZUSTAND_SPIELEN
         
