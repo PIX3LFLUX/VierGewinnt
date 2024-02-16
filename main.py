@@ -16,7 +16,7 @@ ZUSTAND_GEWONNEN = "gewonnen"
 aktueller_zustand = ZUSTAND_INIT 
 
 
-naechsterSpieler = {1 : 2, 2 : 1}   # {"spieler1" : "spieler2", "spieler2" : "spieler1"}
+naechsterSpieler = {1 : -1, -1 : 1}   # {"spieler1" : "spieler2", "spieler2" : "spieler1"}
 status = {"spieler" : 1}
 
 farbe_spieler = {"spieler1" : 0, "spieler2" : 0}
@@ -63,7 +63,7 @@ button_delay = 0.03 # 30 ms
 
 #### Neo Pixel
 #pixel_pin = Pin(0, Pin.OUT)   # GPIO0 als Ausgang für NeoPixel
-pixel = NeoPixel(Pin(0), anzahlPixel, bpp=4) # Farbmodell anpassen   
+pixel = NeoPixel(Pin(0), anzahlPixel, bpp=4) # 4 Bytes pro Pixel (RGBW) 
 
 #### Ende Neo Pixel
 
@@ -83,8 +83,8 @@ def wheel(pos):
 
 
 
-farbe_spieler = [(0, 0, 255, 20), (255, 0, 0, 80)] # rot
-#farbe_spieler["1"] =  # blau
+#farbe_spieler = [(0, 0, 255, 20), (255, 0, 0, 80)] # Farben für Spieler 1 und 2, nicht mehr benötigt, da Spieler Farbe selbst wählt
+
 
 spielfeld = spiellogik.Spielfeld()
 
@@ -101,15 +101,9 @@ def update_neopixel(ergebnis):
     for index in ausgabe:
         if index == 1:
             pixel[i] = farbe_spieler[0]
-        elif index == 2:
+        elif index == -1:
             pixel[i] = farbe_spieler[1]
         i = i+1
-    
-
-    # Wenn Wert gleich 2 --> Farbe spieler 2
-    #for index in x:
-    #    pixel[index] = (0, 0, 255, 128)#farbe_spieler["spieler2"]
-
     
     # pixel senden
     pixel.write()
@@ -122,7 +116,7 @@ def reset_matrix():
     spielfeld.reset()
 
     for i in range(anzahlPixel):
-        pixel[i] = (0, 0, 0, 0)
+        pixel[i] = (0, 0, 0, 0) # alle Pixel aus
 
     pixel.write()
 
@@ -241,7 +235,7 @@ def get_spalte():
     time.sleep(button_delay)  # warte die Zeit, um zu entprellen
 
         
-    # TODO: Bessere Entrpellung als per delay
+    # TODO: Bessere Entprellung als per delay
 
     return spalte
 
@@ -268,22 +262,48 @@ def spielzug() -> bool:
 
     if ergebnis[1] == 1:
         # aktueller Spieler hat gewonnen
-        time.sleep(1)
 
-        #for i in range(anzahlPixel):
-        #    pixel[i] = farbe_spieler[spieler-1]
+        # mache alles aus
+        for i in range(anzahlPixel):
+            pixel[i] = (0, 0, 0, 0) # alle Pixel aus
+        pixel.write()
 
-        #pixel.write()
+        # jetzt nur noch die Gewinnerzellen anmachen
         update_neopixel(ergebnis[0])
 
+        #warte kurz
+        time.sleep(2)
+
+        # und setzte alles auf die Gewinnerfarbe
+        for i in range(anzahlPixel):
+            pixel[i] = farbe_spieler[spieler-1]
+            pixel.write()
+            time.sleep(0.03)
         return True
 
     elif ergebnis[1] == -1:
         # spalte schon voll, nochmal neu
+
+        # lasse die spalte nun 3 mal blinken
+        for z in range(3):
+            for i in range(6):
+                pixel[gespielte_spalte+7*i] = (0, 0, 0, 0) # alle Pixel aus
+                print(i*gespielte_spalte)	
+            pixel.write()
+            time.sleep(0.3)
+            update_neopixel(ergebnis[0])
+            time.sleep(0.3)
+
         return False
     
     elif ergebnis[1] == -2:
         # unentschieden
+
+        # lasse von oben nach unten alle Pixel verscwinden
+        for i in range(6):
+            for j in range(7):
+                pixel[j+7*i] = (0, 0, 0, 0) # alle Pixel aus
+
         return True
 
     else:

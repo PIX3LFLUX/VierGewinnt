@@ -1,8 +1,8 @@
-from ulab import numpy as np
+import numpy as np
 
 # Gewinnmatrixen
-#spieler1Vec = np.array([1,1,1,1], dtype=np.int8)
-#spieler2Vec = np.array([2,2,2,2], dtype=np.int8)
+spieler1Vec = np.array([1,1,1,1], dtype=np.int8)
+spieler2Vec = np.array([2,2,2,2], dtype=np.int8)
 
 class Spielfeld():
 
@@ -21,7 +21,8 @@ class Spielfeld():
 
 
     def __init__(self):
-        self.spielfeld = np.zeros((6,7), dtype=np.int8)
+        # self.spielfeld = np.zeros((6,7), dtype=np.int8)
+        self.spielfeld = np.array([[-1,0,0,0,0,0,0],[-1,0,0,0,0,0,0],[-1,0,0,1,0,0,0],[-1,1,0,0,1,-1,0],[1,0,1,0,0,0,0],[0,-1,0,1,1,1,1]], dtype=np.int8)
 
 
     def _korrelation(self, filter):
@@ -90,56 +91,29 @@ class Spielfeld():
                 if x == 4:
                     return False, []
 
-
-    def wurf(self, spieler, spalte):
-
-        spalten_vec = self.spielfeld[:,spalte]      # kopiere die aktuelle Spalte in einen Vektor, um damit zu arbeiten
-        non_zero = np.nonzero(spalten_vec)[0]       # zählt, wo nicht null ist. Damit muss an der Stelle dann gefüllt werden
-
-        
-        #print("Non_Zero: ", non_zero)
-        #print("Non_Zero Size: ", non_zero.size)
-
-        if non_zero.size == 0:                      
-            zeile = self.spielfeld.shape[0]-1
-            self.spielfeld[zeile,spalte] = spieler
-
-        elif non_zero.size == 6:
-            # spalte voll, nochmal spielen
-            # TODO: Blinken lassen oder so
-            return self.spielfeld, -1
-
-        else:                                       
-            zeile = non_zero[0]-1
-            self.spielfeld[zeile,spalte] = spieler
-
-
-        #if self._pruefe_gewonnen(zeile, spalte):
-        pos, filter = self._pruefe_gewonnen(spieler)
-
-        if pos: # es gibt einen Gewinner, pos ist nicht leer
-            #print("Indizes: " , pos)
-            # spielfeld mit filter an der position pos maskieren
-            maskiertes_spiel = np.zeros((6,7), dtype=np.int8)
-
-            maskiertes_spiel[pos[0]-filter.shape[0]+1:pos[0]+1, pos[1]-filter.shape[1]+1:pos[1]+1] = filter*spieler
-            #print(maskiertes_spiel)
-
-            return maskiertes_spiel, 1
-        
-        
-        else: # kein Gewinner, weiter spielen
-            check_spielfeld = self.spielfeld.copy()
-            check_spielfeld.sort(axis=None)
-
-            # prüfe ob spielfeld voll:
-            if check_spielfeld[0] != 0:
-                return self.spielfeld, -2
-            
-            # wenn nicht, weiter spielen
-            return self.spielfeld, 0
         
 
-    def reset(self):                                # setzt das Spielfeld zurück
-        self.spielfeld = np.zeros((6,7), dtype=np.int8)
-        return self.spielfeld
+def main():
+    spieler = -1
+
+    spielfeld = Spielfeld()
+    print(spielfeld.spielfeld)
+    pos, filter = spielfeld._pruefe_gewonnen(spieler)
+
+    print(pos)
+
+    if(pos == False):
+        print("Kein Gewinner")
+    else:
+        print("Indizes: " , pos)
+        # spielfeld mit filter an der position pos maskieren
+        maskiertes_spiel = np.zeros((6,7), dtype=np.int8)
+
+        #maskiertes_spiel[pos[0][0]:filter.shape[0], pos[0][1]:filter.shape[1], ] = filter*(-1)
+        maskiertes_spiel[pos[0]-filter.shape[0]+1:pos[0]+1, pos[1]-filter.shape[1]+1:pos[1]+1] = filter*spieler
+        print(maskiertes_spiel)
+
+    
+
+if __name__ == "__main__":
+    main()
