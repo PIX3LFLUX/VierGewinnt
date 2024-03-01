@@ -157,5 +157,5 @@ class KI:
 
     def get_spalte(self, board):
         depth = 3
-        minimax = KI._minimax(board, depth, -10, 10, True)
+        minimax = KI._minimax(board, depth, -100000000000000, 100000000000000, True)
         return minimax[0]
