@@ -143,3 +143,6 @@ class Spielfeld():
     def reset(self):                                # setzt das Spielfeld zurück
         self.spielfeld = np.zeros((6,7), dtype=np.int8)
         return self.spielfeld
+    
+    def gib_spielfeld(self):
+        return self.spielfeld

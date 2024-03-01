@@ -3,6 +3,7 @@ from neopixel import NeoPixel
 from ulab import numpy as np
 import time
 import spiellogik
+import ki
 
 anzahlPixel = 6*7
 
@@ -25,6 +26,8 @@ typ_spieler = {"spieler1" : 0, "spieler2" : 0}
 
 led_an_ki = [1, 3, 8, 10, 12, 15, 16, 22, 23, 26, 29, 31, 33, 36, 38, 40]
 led_an_spieler = [2,3,9,11,16,18,23,24,30,37]
+
+ki = ki.KI()
 
 
 
@@ -95,7 +98,10 @@ spielfeld = spiellogik.Spielfeld()
 
 def update_neopixel(ergebnis):
     # array zerlegen
+    
     ausgabe = ergebnis.flatten() # macht reihenweise, also erst oberste reihe, dann zweite hintendran usw.
+  
+
 
     #print("Ergebnis flattend: ", ausgabe)
 
@@ -131,11 +137,6 @@ def reset_matrix():
 def get_player_color(): # lässt Spieler die eigene Farbe definieren
     global button_delay, anzahlPixel
 
-    #hue = 0
-    #farbe = pixel.colorHSV(hue, 255, 255) 
-    #pixel.fill(farbe)
-    #pixel.write()
-
     hue = 0
 
 
@@ -155,20 +156,12 @@ def get_player_color(): # lässt Spieler die eigene Farbe definieren
             if hue < 0:
                 hue = 255
 
-    #        farbe = pixel.colorHSV(hue, 255, 255) 
-    #        pixel.fill(farbe)
-    #        pixel.write()
-
         elif eingang_5.value() == 0: # zweites von rechts geklick, hue +
             hue = hue+5
             
             # fake "Overflow", Python kennt keine maximallänge bei Int
             if hue > 255:
                 hue = 0
-
-    #        farbe = pixel.colorHSV(hue, 255, 255) 
-    #        pixel.fill(farbe)
-    #        pixel.write()
             
         farbe = wheel(hue)
 
@@ -189,6 +182,9 @@ def get_player_type(farbe_spieler): # lässt Spieler auswählen ob KI oder Mensc
     global button_delay, anzahlPixel, led_an_ki, led_an_spieler
 
     type = 0 # 0 ist Mensch, 1 ist KI
+
+    for led in led_an_spieler:
+        pixel[led] = farbe_spieler
 
     # beide ganz außen gleichzeitig drücken zum starten
     while (eingang_0.value() != 0) or (eingang_6.value() != 0):
@@ -283,16 +279,23 @@ def get_spalte():
 
 
 def spielzug() -> bool:
-    global anzahlPixel, farbe_spieler
+    global anzahlPixel, farbe_spieler, ki
 
     spieler = status["spieler"]     # wer ist dran?
 
+    if spieler == -1:
+        spieler_id_typ = 1
+    else:
+        spieler_id_typ = 0
+
     # warte auf Eingabe einer Spalte
-    if typ_spieler[spieler] == 0: # Mensch
+    if typ_spieler[spieler_id_typ] == 0: # Mensch
         gespielte_spalte = get_spalte()
 
     else: # KI
-        gespielte_spalte = ki.KI(spielfeld.spielfeld, spieler).get_best_move()
+        print("Bin eine KI und spiele jetzt")
+        board = spielfeld.gib_spielfeld()
+        gespielte_spalte = ki.get_spalte(board)
 
 
     print("Gespielte Spalte: ", gespielte_spalte)
@@ -323,7 +326,7 @@ def spielzug() -> bool:
 
         # und setzte alles auf die Gewinnerfarbe
         for i in range(anzahlPixel):
-            pixel[i] = farbe_spieler[spieler-1]
+            pixel[i] = farbe_spieler[spieler_id_typ]
             pixel.write()
             time.sleep(0.03)
         return True
@@ -387,14 +390,13 @@ def main():
 
         elif aktueller_zustand == ZUSTAND_SPIELER_WAHELEN:
             # spieler wählen Farbe
+            # und snchließend ob sie Spieler oder KI sind
 
-            # TODO: farben einlesen
 
             farbe_spieler[0] = get_player_color()
-            farbe_spieler[1] = get_player_color()
-
-            # spieler wählen PvP oder PvE
             typ_spieler[0] = get_player_type(farbe_spieler[0])
+
+            farbe_spieler[1] = get_player_color()
             typ_spieler[1] = get_player_type(farbe_spieler[1])
 
             aktueller_zustand = ZUSTAND_SPIELEN
