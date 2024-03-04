@@ -9,16 +9,34 @@ class KI:
 
         summe_player = np.sum(np.equal(window, player))
 
+        # Gewinn bewerten
+
         if summe_player == 4:
             score += 100
         elif summe_player == 3 and np.sum(np.equal(window, 0)) == 1:
-            score += 8
+            score += 50
         elif summe_player == 2 and np.sum(np.equal(window, 0)) == 2:
-            score += 3
+            score += 15
+
+        # Gegner blocken
+
         if np.sum(np.equal(window, opponent)) == 3 and np.sum(np.equal(window, 0)) == 1:
-            score -= 30
+            score -= 60
         elif np.sum(np.equal(window, opponent)) == 2 and np.sum(np.equal(window, 0)) == 2:
-            score -= 15
+            score -= 30
+    
+       # Bonus für das Zentrum
+        center_point = 3
+        if window[center_point] == player:
+            score += 10
+    
+        # Bonus für vertikale Verbindungen
+        vertical_score = 0
+        for i in range(len(window) - 1):
+            if window[i] == player and window[i + 1] == player:
+                vertical_score += 5
+        score += vertical_score
+
         return score
 
     @staticmethod
@@ -100,15 +118,16 @@ class KI:
             column = random.choice(valid_locations)
             for col in valid_locations:
                 row = KI._get_next_open_row(board, col)
-                temp_board = board.copy()
-                KI._drop_piece(temp_board, row, col, 2)
-                new_score = KI._minimax(temp_board, depth - 1, alpha, beta, False)[1]
-                if new_score > value:
-                    value = new_score
-                    column = col
-                alpha = max(alpha, value)
-                if alpha >= beta:
-                    break
+                if row != -1:
+                    temp_board = board.copy()
+                    KI._drop_piece(temp_board, row, col, 2)
+                    new_score = KI._minimax(temp_board, depth - 1, alpha, beta, False)[1]
+                    if new_score > value:
+                        value = new_score
+                        column = col
+                    alpha = max(alpha, value)
+                    if alpha >= beta:
+                        break
             return column, value
 
         else:
@@ -116,15 +135,16 @@ class KI:
             column = random.choice(valid_locations)
             for col in valid_locations:
                 row = KI._get_next_open_row(board, col)
-                temp_board = board.copy()
-                KI._drop_piece(temp_board, row, col, 1)
-                new_score = KI._minimax(temp_board, depth - 1, alpha, beta, True)[1]
-                if new_score < value:
-                    value = new_score
-                    column = col
-                beta = min(beta, value)
-                if alpha >= beta:
-                    break
+                if row != -1:
+                    temp_board = board.copy()
+                    KI._drop_piece(temp_board, row, col, 1)
+                    new_score = KI._minimax(temp_board, depth - 1, alpha, beta, True)[1]
+                    if new_score < value:
+                        value = new_score
+                        column = col
+                    beta = min(beta, value)
+                    if alpha >= beta:
+                        break
             return column, value
 
     @staticmethod
@@ -156,6 +176,6 @@ class KI:
         return False
 
     def get_spalte(self, board):
-        depth = 3
+        depth = 2
         minimax = KI._minimax(board, depth, -100000000000000, 100000000000000, True)
         return minimax[0]
