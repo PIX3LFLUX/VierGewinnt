@@ -3,6 +3,7 @@ from neopixel import NeoPixel
 from ulab import numpy as np
 import time
 import spiellogik
+import ki
 
 anzahlPixel = 6*7
 
@@ -16,10 +17,17 @@ ZUSTAND_GEWONNEN = "gewonnen"
 aktueller_zustand = ZUSTAND_INIT 
 
 
-naechsterSpieler = {1 : 2, 2 : 1}   # {"spieler1" : "spieler2", "spieler2" : "spieler1"}
+naechsterSpieler = {1 : -1, -1 : 1}   # {"spieler1" : "spieler2", "spieler2" : "spieler1"}
 status = {"spieler" : 1}
 
 farbe_spieler = {"spieler1" : 0, "spieler2" : 0}
+
+typ_spieler = {"spieler1" : 0, "spieler2" : 0}
+
+led_an_ki = [1, 3, 8, 10, 12, 15, 16, 22, 23, 26, 29, 31, 33, 36, 38, 40]
+led_an_spieler = [2,3,9,11,16,18,23,24,30,37]
+
+ki = ki.KI()
 
 
 
@@ -63,7 +71,7 @@ button_delay = 0.03 # 30 ms
 
 #### Neo Pixel
 #pixel_pin = Pin(0, Pin.OUT)   # GPIO0 als Ausgang für NeoPixel
-pixel = NeoPixel(Pin(0), anzahlPixel, bpp=4) # Farbmodell anpassen   
+pixel = NeoPixel(Pin(0), anzahlPixel, bpp=4) # 4 Bytes pro Pixel (RGBW) 
 
 #### Ende Neo Pixel
 
@@ -83,14 +91,17 @@ def wheel(pos):
 
 
 
-farbe_spieler = [(0, 0, 255, 20), (255, 0, 0, 80)] # rot
-#farbe_spieler["1"] =  # blau
+#farbe_spieler = [(0, 0, 255, 20), (255, 0, 0, 80)] # Farben für Spieler 1 und 2, nicht mehr benötigt, da Spieler Farbe selbst wählt
+
 
 spielfeld = spiellogik.Spielfeld()
 
 def update_neopixel(ergebnis):
     # array zerlegen
+    
     ausgabe = ergebnis.flatten() # macht reihenweise, also erst oberste reihe, dann zweite hintendran usw.
+  
+
 
     #print("Ergebnis flattend: ", ausgabe)
 
@@ -101,15 +112,9 @@ def update_neopixel(ergebnis):
     for index in ausgabe:
         if index == 1:
             pixel[i] = farbe_spieler[0]
-        elif index == 2:
+        elif index == -1:
             pixel[i] = farbe_spieler[1]
         i = i+1
-    
-
-    # Wenn Wert gleich 2 --> Farbe spieler 2
-    #for index in x:
-    #    pixel[index] = (0, 0, 255, 128)#farbe_spieler["spieler2"]
-
     
     # pixel senden
     pixel.write()
@@ -122,7 +127,7 @@ def reset_matrix():
     spielfeld.reset()
 
     for i in range(anzahlPixel):
-        pixel[i] = (0, 0, 0, 0)
+        pixel[i] = (0, 0, 0, 0) # alle Pixel aus
 
     pixel.write()
 
@@ -131,11 +136,6 @@ def reset_matrix():
 
 def get_player_color(): # lässt Spieler die eigene Farbe definieren
     global button_delay, anzahlPixel
-
-    #hue = 0
-    #farbe = pixel.colorHSV(hue, 255, 255) 
-    #pixel.fill(farbe)
-    #pixel.write()
 
     hue = 0
 
@@ -156,20 +156,12 @@ def get_player_color(): # lässt Spieler die eigene Farbe definieren
             if hue < 0:
                 hue = 255
 
-    #        farbe = pixel.colorHSV(hue, 255, 255) 
-    #        pixel.fill(farbe)
-    #        pixel.write()
-
         elif eingang_5.value() == 0: # zweites von rechts geklick, hue +
             hue = hue+5
             
             # fake "Overflow", Python kennt keine maximallänge bei Int
             if hue > 255:
                 hue = 0
-
-    #        farbe = pixel.colorHSV(hue, 255, 255) 
-    #        pixel.fill(farbe)
-    #        pixel.write()
             
         farbe = wheel(hue)
 
@@ -185,6 +177,46 @@ def get_player_color(): # lässt Spieler die eigene Farbe definieren
 
     #return farbe
     return farbe
+
+def get_player_type(farbe_spieler): # lässt Spieler auswählen ob KI oder Mensch
+    global button_delay, anzahlPixel, led_an_ki, led_an_spieler
+
+    type = 0 # 0 ist Mensch, 1 ist KI
+
+    for led in led_an_spieler:
+        pixel[led] = farbe_spieler
+
+    # beide ganz außen gleichzeitig drücken zum starten
+    while (eingang_0.value() != 0) or (eingang_6.value() != 0):
+        time.sleep(button_delay)
+
+        if eingang_1.value() == 0: # zweites von links geklick
+            type = 0
+
+            for led in led_an_ki:
+                pixel[led] = [0,0,0,0]
+
+            for led in led_an_spieler:
+                pixel[led] = farbe_spieler
+
+        elif eingang_5.value() == 0: # zweites von rechts geklick
+            type = 1
+            
+            for led in led_an_spieler:
+                pixel[led] = [0,0,0,0]
+
+            for led in led_an_ki:
+                pixel[led] = farbe_spieler
+
+        pixel.write()
+        
+    while (eingang_0.value() == 0) or (eingang_6.value() == 0): # warte bis beide Taster wieder gelöst sind
+        time.sleep(button_delay)
+
+    reset_matrix()
+
+    #return farbe
+    return type
 
 
 def get_spalte():
@@ -241,18 +273,30 @@ def get_spalte():
     time.sleep(button_delay)  # warte die Zeit, um zu entprellen
 
         
-    # TODO: Bessere Entrpellung als per delay
+    # TODO: Bessere Entprellung als per delay
 
     return spalte
 
 
 def spielzug() -> bool:
-    global anzahlPixel, farbe_spieler
+    global anzahlPixel, farbe_spieler, ki
 
     spieler = status["spieler"]     # wer ist dran?
 
+    if spieler == -1:
+        spieler_id_typ = 1
+    else:
+        spieler_id_typ = 0
+
     # warte auf Eingabe einer Spalte
-    gespielte_spalte = get_spalte()
+    if typ_spieler[spieler_id_typ] == 0: # Mensch
+        gespielte_spalte = get_spalte()
+
+    else: # KI
+        print("Bin eine KI und spiele jetzt")
+        board = spielfeld.gib_spielfeld()
+        gespielte_spalte = ki.get_spalte(board)
+
 
     print("Gespielte Spalte: ", gespielte_spalte)
 
@@ -268,22 +312,48 @@ def spielzug() -> bool:
 
     if ergebnis[1] == 1:
         # aktueller Spieler hat gewonnen
-        time.sleep(1)
 
-        #for i in range(anzahlPixel):
-        #    pixel[i] = farbe_spieler[spieler-1]
+        # mache alles aus
+        for i in range(anzahlPixel):
+            pixel[i] = (0, 0, 0, 0) # alle Pixel aus
+        pixel.write()
 
-        #pixel.write()
+        # jetzt nur noch die Gewinnerzellen anmachen
         update_neopixel(ergebnis[0])
 
+        #warte kurz
+        time.sleep(2)
+
+        # und setzte alles auf die Gewinnerfarbe
+        for i in range(anzahlPixel):
+            pixel[i] = farbe_spieler[spieler_id_typ]
+            pixel.write()
+            time.sleep(0.03)
         return True
 
     elif ergebnis[1] == -1:
         # spalte schon voll, nochmal neu
+
+        # lasse die spalte nun 3 mal blinken
+        for z in range(3):
+            for i in range(6):
+                pixel[gespielte_spalte+7*i] = (0, 0, 0, 0) # alle Pixel aus
+                print(i*gespielte_spalte)	
+            pixel.write()
+            time.sleep(0.3)
+            update_neopixel(ergebnis[0])
+            time.sleep(0.3)
+
         return False
     
     elif ergebnis[1] == -2:
         # unentschieden
+
+        # lasse von oben nach unten alle Pixel verscwinden
+        for i in range(6):
+            for j in range(7):
+                pixel[j+7*i] = (0, 0, 0, 0) # alle Pixel aus
+
         return True
 
     else:
@@ -320,14 +390,14 @@ def main():
 
         elif aktueller_zustand == ZUSTAND_SPIELER_WAHELEN:
             # spieler wählen Farbe
+            # und snchließend ob sie Spieler oder KI sind
 
-            # TODO: farben einlesen
 
             farbe_spieler[0] = get_player_color()
-            farbe_spieler[1] = get_player_color()
+            typ_spieler[0] = get_player_type(farbe_spieler[0])
 
-            # spieler wählen PvP oder PvE
-            # TODO:
+            farbe_spieler[1] = get_player_color()
+            typ_spieler[1] = get_player_type(farbe_spieler[1])
 
             aktueller_zustand = ZUSTAND_SPIELEN
         
