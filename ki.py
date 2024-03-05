@@ -36,7 +36,7 @@ class KI:
             if window[i] == player and window[i + 1] == player:
                 vertical_score += 5
         score += vertical_score
-
+        
         return score
 
     @staticmethod
@@ -46,6 +46,7 @@ class KI:
         # Score center column
         center_array = board[:, 3]
         center_count = np.sum(center_array == player)
+
         score += center_count * 3
 
         # Score Horizontal
@@ -58,6 +59,7 @@ class KI:
         # Score Vertical
         for c in range(7):
             col_array = board[:, c]
+
             for r in range(3):
                 window = col_array[r:r + 4]
                 score += KI._evaluate_window(window, player)
@@ -108,6 +110,7 @@ class KI:
                     return (None, 100000000000000)
                 elif KI._check_winner(board, 1):
                     return (None, -100000000000000)
+
                 else:
                     return (None, 0)
             else:
@@ -116,6 +119,7 @@ class KI:
         if maximizingPlayer:
             value = -100000
             column = random.choice(valid_locations)
+
             for col in valid_locations:
                 row = KI._get_next_open_row(board, col)
                 if row != -1:
@@ -175,7 +179,9 @@ class KI:
 
         return False
 
+
     def get_spalte(self, board):
         depth = 2
         minimax = KI._minimax(board, depth, -100000000000000, 100000000000000, True)
         return minimax[0]
+

@@ -4,6 +4,18 @@
 
 Dies ist eine Implementierung des Spiels '4-Gewinnt' auf einer LED Matrix im Rahmen einer Projektarbeit an der Hochschule Karlsruhe. Die einzelnen Spalten werden über Taster ausgewählt. Die Außenmaße der dargestellten Lösung betragen circa 1 m x 1 m.
 
+## Was funktioniert:
+
+- Spieler vs Spieler
+- Spieler können Ihre Farbe auswählen
+- Diagonal, waagerecht und horizontal werden "4 in einer Reihe" erkannt.
+- Wenn das Spielfeld voll ist, ohne das jemand gewonnen hat, wird das ebenfalls erkannt.
+
+## Bedienung
+
+- Farbe kann mit dem 2. Taster von links oder rechts jeweils im Farbspektrum verschoben werden
+- Durch gleichzeitiges Drücken der Taster ganz außen lässt sich die Farbauswahl bestätigen oder nach einem Sieg / Unentschieden ein neues Spiel starten
+
 ## Was wird benötigt
 
 Beschreibung | Menge | Kosten
@@ -168,6 +180,7 @@ Ursprünglich sollte die Eingabe mit Touchsensoren erfolgen. Dafür empfiehlt es
 
 
 ## Weitere Ressourcen
+- [Quelle wheel-Funktion für die Farbauswahl](https://randomnerdtutorials.com/micropython-ws2812b-addressable-rgb-leds-neopixel-esp32-esp8266/)
 
 - [Micropython ESP Handbuch](https://docs.micropython.org/en/latest/esp32/quickref.html#neopixel-and-apa106-driver)
 
