@@ -3,18 +3,20 @@
 ## Projektbeschreibung
 
 Dies ist eine Implementierung des Spiels '4-Gewinnt' auf einer LED Matrix im Rahmen einer Projektarbeit an der Hochschule Karlsruhe. Die einzelnen Spalten werden über Taster ausgewählt. Die Außenmaße der dargestellten Lösung betragen circa 1 m x 1 m.
+Es gibt einen Modus PvP, PvE und EvE. Als KI Gegner wird ein Alpha-Beta Algorithmus verwendet.
 
 ## Was funktioniert:
 
-- Spieler vs Spieler
 - Spieler können Ihre Farbe auswählen
+- Spieler können Player oder KI auswählen
 - Diagonal, waagerecht und horizontal werden "4 in einer Reihe" erkannt.
 - Wenn das Spielfeld voll ist, ohne das jemand gewonnen hat, wird das ebenfalls erkannt.
 
 ## Bedienung
 
 - Farbe kann mit dem 2. Taster von links oder rechts jeweils im Farbspektrum verschoben werden
-- Durch gleichzeitiges Drücken der Taster ganz außen lässt sich die Farbauswahl bestätigen oder nach einem Sieg / Unentschieden ein neues Spiel starten
+- Durch gleichzeitiges Drücken der Taster ganz außen lässt sich die Farbauswahl bestätigen oder nach einem Sieg / Unentschieden ein neues Spiel starten.
+- Mit der gleichen Bedienung kann zwischen Player und KI gewählt werden
 
 ## Was wird benötigt
 
@@ -53,8 +55,6 @@ Wir sind wie folgt vorgegangen:
 
 ## Wie man das projekt nuzt
 
-
-
 ESP32 mit Micropython
 
 Visual Studio Code mit pymakr
@@ -63,7 +63,24 @@ Zunächst muss die Notwendige Firmware (micropython mit ulab) auf den ESP Microc
 
 Anschließend müssen die notwendigen Dateien für das Vier-gewinnt übertragen werden.
 
-Mit einem ``python pyboard.py --device COM15 main.py`` kann nun das Programm ausgeführt werden.
+## Dateien übertragen
+
+Zum Übertragen der am PC erstellten Python Dateien empfiehlt sich das Pyboard Tool. Es werden die beiden Dateien main.py, ki.py sowie spiellogik.py übetragen. 
+```
+python pyboard.py --device COM15 -f cp VierGewinnt/main.py :
+python pyboard.py --device COM15 -f cp VierGewinnt/spiellogik.py :
+python pyboard.py --device COM15 -f cp VierGewinnt/ki.py :
+
+python pyboard.py --device COM15 -f ls
+
+ls :
+         139 boot.py
+        6319 main.py
+        4131 spiellogik.py
+
+```
+
+Mit einem ``python pyboard.py --device COM15 main.py`` kann das Programm ausgeführt werden. Nach einem neuen Boot des Boards führt sich das Programm ebenfalls automatisch aus. Es sollte vollständig rot leuchten, dann kann mit den zweiten Taster die Farbe gewechselt werden.
 
 
 ## Mircopython aufsetzten
@@ -156,24 +173,6 @@ esptool.py -p /dev/ttyUSB0 -b 460800 --before default_reset --after no_reset --c
 
 Leider funktioniert der Octal PSRAM mit dieser Konfiguration nicht.
 
-
-## Dateien übertragen
-
-Zum Übertragen der am PC erstellten Python Dateien empfiehlt sich das Pyboard Tool. Es werden die beiden Dateien main.py sowie spiellogik.py übetragen. 
-```
-python pyboard.py --device COM15 -f cp VierGewinnt/main.py :
-python pyboard.py --device COM15 -f cp VierGewinnt/spiellogik.py :
-
-python pyboard.py --device COM15 -f ls
-
-ls :
-         139 boot.py
-        6319 main.py
-        4131 spiellogik.py
-
-```
-
-Mit einem ``python pyboard.py --device COM15 main.py`` kann das Programm ausgeführt werden.
 
 ## Mitwirken
 Ursprünglich sollte die Eingabe mit Touchsensoren erfolgen. Dafür empfiehlt es sich aber, runde Platinenstücke gemäß dem [Datenblatt](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/touch_pad.html) von Espressif anzufertigen und dann mit der Dicke des Isolators zu experimentieren (es wird ein Plattenkondensator realisiert). Gern kann dieses Feature implementiert werden. Auch sind andere Algorithem für eine KI denkbar. 
