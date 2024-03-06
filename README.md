@@ -45,7 +45,7 @@ cd VierGewinnt
 
 ### 2. Micropython auf das ESP 32 Board aufspielen
 
-Zunächst muss die Notwendige Firmware (micropython mit ulab) auf den ESP Microcontroller geflasht werden. Sie kann aus dem Ordner `firmware` für einen ESP32S3 mit 32 MBit Speicher gedownloadet werden oder unter [Micropython aufsetzten](https://github.com/SachsenBahner/VierGewinnt?tab=readme-ov-file#mircopython-aufsetzten) selbst erstellt werden.
+Zunächst muss die Notwendige Firmware (micropython mit ulab) auf den ESP Microcontroller geflasht werden. Sie kann aus dem Ordner `firmware` für einen ESP32S3 mit 32 MBit Speicher gedownloadet werden oder unter [Micropython aufsetzten](https://github.com/SachsenBahner/VierGewinnt?tab=readme-ov-file#micropython-aufsetzten) selbst erstellt werden.
 
 ```shell
 esptool.py -p (PORT) erase_flash
@@ -60,7 +60,7 @@ wget https://github.com/micropython/micropython/blob/master/tools/pyboard.py
 pip install pyserial
 ```
 
-### 4. ESP 32 mit USB verbinden
+### 4. ESP32 mit USB verbinden
 
 ### 5. Dateien übertragen
 
@@ -91,7 +91,11 @@ Nach einem neuen Boot des Boards führt sich das Programm ebenfalls automatisch 
 
 ---
 
-## Detailiertere Beschreibung
+# Detailiertere Beschreibung
+
+## Blockschaltbild
+
+
 
 ## Was wird benötigt
 
@@ -130,7 +134,17 @@ Wir sind wie folgt vorgegangen:
 10. Rohrmatrix von hinten einlassen
 11. Rückwand mit LEDS von hinten einlassen und mit Winkeln gegen ein Rausfallen sichern.
 
-## Mircopython aufsetzten
+## Debug
+
+Über eine der beiden USB Schnittstellen erfolgt eine DEBUG Ausgabe des Spielfelds nach jedem Spielzug.
+
+## Software Architektur
+
+### Spiellogik
+
+### Alpha-Beta Algorithmus
+
+## Micropython aufsetzten
 
 Micropython mit ulab ist wie Numpy nur für Mircocontroller. Einen fertig compilierten Build gibt es im Ordner ``firmware``.
 
