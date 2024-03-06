@@ -222,6 +222,10 @@ Leider funktioniert der Octal PSRAM mit dieser Konfiguration nicht.
 
 Ursprünglich sollte die Eingabe mit Touchsensoren erfolgen. Dafür empfiehlt es sich aber, runde Platinenstücke gemäß dem [Datenblatt](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/touch_pad.html) von Espressif anzufertigen und dann mit der Dicke des Isolators zu experimentieren (es wird ein Plattenkondensator realisiert). Gern kann dieses Feature implementiert werden. Auch sind andere Algorithem für eine KI denkbar. 
 
+<a href="https://github.com/SachsenBahner/VierGewinnt/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=SachsenBahner/VierGewinnt" />
+</a>
+
 ## Weitere Ressourcen
 
 - [Quelle wheel-Funktion für die Farbauswahl](https://randomnerdtutorials.com/micropython-ws2812b-addressable-rgb-leds-neopixel-esp32-esp8266/)
