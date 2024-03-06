@@ -22,7 +22,7 @@ Es gibt einen Modus PvP, PvE und EvE. Als KI Gegner wird ein Alpha-Beta Algorith
 
 Du benötigst folgendes, um das Spiel nachbauen zu können:
 
-- ESP32 Microcontroller mit [https://micropython.org/](micropython)
+- ESP32 Microcontroller
 
 - LED Matrix mit 42 Neopixel LEDs in RGBW (RGB geht auch, dann musst du aber die Funktionen umschreiben)
 
