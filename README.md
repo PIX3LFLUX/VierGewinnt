@@ -1,8 +1,9 @@
 <div align="center">
   <h1 align="center">Vier Gewinnt</h1>
   <h3>Kinderspiel auf einer LED Matrix mit KI Gegner</h3>
-  ![Bilder](/bilder/_DSF4458.jpg?raw=true "Titelbild")
 </div>
+
+  ![Bilder](/bilder/_DSF4458.jpg?raw=true "Titelbild")
 
 Das ist eine Implementierung des Spiels '4-Gewinnt' mit einem KI Gegner auf einer LED Matrix im Rahmen einer Projektarbeit an der Hochschule Karlsruhe. Die einzelnen Spalten werden über Taster ausgewählt. Die Außenmaße der dargestellten Lösung betragen circa 1 m x 1 m.
 Es gibt einen Modus PvP, PvE und EvE. Als KI Gegner wird ein Alpha-Beta Algorithmus verwendet.
