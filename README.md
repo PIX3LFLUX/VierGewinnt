@@ -1,36 +1,115 @@
-# VierGewinnt
+<div align="center">
+  <h1 align="center">Vier Gewinnt</h1>
+  <h3>Kinderspiel auf einer LED Matrix mit KI Gegner</h3>
+</div>
 
-## Projektbeschreibung
-
-Dies ist eine Implementierung des Spiels '4-Gewinnt' auf einer LED Matrix im Rahmen einer Projektarbeit an der Hochschule Karlsruhe. Die einzelnen Spalten werden über Taster ausgewählt. Die Außenmaße der dargestellten Lösung betragen circa 1 m x 1 m.
+Das ist eine Implementierung des Spiels '4-Gewinnt' mit einem KI Gegner auf einer LED Matrix im Rahmen einer Projektarbeit an der Hochschule Karlsruhe. Die einzelnen Spalten werden über Taster ausgewählt. Die Außenmaße der dargestellten Lösung betragen circa 1 m x 1 m.
 Es gibt einen Modus PvP, PvE und EvE. Als KI Gegner wird ein Alpha-Beta Algorithmus verwendet.
 
-## Was funktioniert:
+## Features
+
+---
 
 - Spieler können Ihre Farbe auswählen
+
 - Spieler können Player oder KI auswählen
+
 - Diagonal, waagerecht und horizontal werden "4 in einer Reihe" erkannt.
+
 - Wenn das Spielfeld voll ist, ohne das jemand gewonnen hat, wird das ebenfalls erkannt.
 
+## Quick Start
+
+---
+
+Du benötigst folgendes, um das Spiel nachbauen zu können:
+
+- ESP32 Microcontroller mit [https://micropython.org/](micropython)
+
+- LED Matrix mit 42 Neopixel LEDs in RGBW (RGB geht auch, dann musst du aber die Funktionen umschreiben)
+
+- Ausreichend großes Netzteil (5V / 4A)
+
+Weiterhin sollte folgende Software vorhanden sein:
+
+- Python 3
+
+- esptool
+
+- ggf. Putty o.Ä. zum Debuggen
+
+### 1. Repository klonen
+
+```shell
+git clone https://github.com/SachsenBahner/VierGewinnt.git
+cd VierGewinnt
+```
+
+### 2. Micropython auf das ESP 32 Board aufspielen
+
+Zunächst muss die Notwendige Firmware (micropython mit ulab) auf den ESP Microcontroller geflasht werden. Sie kann aus dem Ordner `firmware` für einen ESP32S3 mit 32 MBit Speicher gedownloadet werden oder unter [Micropython aufsetzten](https://github.com/SachsenBahner/VierGewinnt?tab=readme-ov-file#mircopython-aufsetzten) selbst erstellt werden.
+
+```shell
+esptool.py -p (PORT) erase_flash
+
+esptool.py -p /dev/ttyUSB0 -b 460800 --before default_reset --after no_reset --chip esp32s3 write_flash --flash_mode dio --flash_size 32MB --flash_freq 80m 0x0 firmware/bootloader.bin 0x8000 firmware/partition-table.bin 0x10000 firmware/micropython.bin
+```
+
+### 3. Pyboard & Pyserial installieren
+
+```shell
+wget https://github.com/micropython/micropython/blob/master/tools/pyboard.py
+pip install pyserial
+```
+
+### 4. ESP 32 mit USB verbinden
+
+### 5. Dateien übertragen
+
+Öffne ein Terminal im Ordner `VierGewinnt`. Zum Übertragen der am PC erstellten Python Dateien empfiehlt sich das Pyboard Tool. Es werden die Dateien main.py, ki.py sowie spiellogik.py übetragen.
+
+```shell
+python pyboard.py --device (PORT) -f cp VierGewinnt/main.py :
+python pyboard.py --device /dev/ttyUSB0 -f cp VierGewinnt/spiellogik.py :
+python pyboard.py --device /dev/ttyUSB0 -f cp VierGewinnt/ki.py :
+
+python pyboard.py --device /dev/ttyUSB0 -f ls
+
+ls :
+         139 boot.py
+        6319 main.py
+        4131 spiellogik.py
+```
+
+Mit einem `python pyboard.py --device /dev/ttyUSB0 main.py` kann das Programm ausgeführt werden. 
+
+Nach einem neuen Boot des Boards führt sich das Programm ebenfalls automatisch aus. Es sollte vollständig rot leuchten, dann kann mit den zweiten Taster die Farbe gewechselt werden.
+
 ## Bedienung
+
+---
 
 - Farbe kann mit dem 2. Taster von links oder rechts jeweils im Farbspektrum verschoben werden
 - Durch gleichzeitiges Drücken der Taster ganz außen lässt sich die Farbauswahl bestätigen oder nach einem Sieg / Unentschieden ein neues Spiel starten.
 - Mit der gleichen Bedienung kann zwischen Player und KI gewählt werden
 
+## Detailiertere Beschreibung
+
+---
+
 ## Was wird benötigt
 
-Beschreibung | Menge | Kosten
--------- | -------- | --------
-ESP32S3 Dev Board   | 1   | ca. 10 €
-LEDs (WS2812b / Neopixel)   | 42 LEDs   | ca. 15 €
-opakes Acrylglas (2 mm) | 1 m x 1 m | ca. 20 €
-Rahmenholz 12 cm x 1.8 cm | ca. 4 lfd m | ca x €
-KG Wasserrohr 125 mm | ca. 3 m | 12 €
-Rückplatte aus Sperrholz / Spahnplatte | 1 m x 1 m | ca. 25 €
-Schrauben, Kleber, Winkel | - | - 
-5V Netzteil (min. 3 A) | - | -
-Kabel | | 
+| Beschreibung                           | Menge       | Kosten   |
+| -------------------------------------- | ----------- | -------- |
+| ESP32S3 Dev Board                      | 1           | ca. 10 € |
+| LEDs (WS2812b / Neopixel)              | 42 LEDs     | ca. 15 € |
+| opakes Acrylglas (2 mm)                | 1 m x 1 m   | ca. 20 € |
+| Rahmenholz 12 cm x 1.8 cm              | ca. 4 lfd m | ca x €   |
+| KG Wasserrohr 125 mm                   | ca. 3 m     | 12 €     |
+| Rückplatte aus Sperrholz / Spahnplatte | 1 m x 1 m   | ca. 25 € |
+| Schrauben, Kleber, Winkel              | -           | -        |
+| 5V Netzteil (min. 3 A)                 | -           | -        |
+| Kabel                                  |             |          |
 
 Werkzeuge wie Säge, Akkuschrauber und Lötkolben sollten natürlich ebenfalls vorhanden sein.
 
@@ -40,7 +119,11 @@ Als LED Streifen haben wir einen Adafruit Neopixel RGBW Streifen verwendet. Durc
 Die Taster wurden auf Unterlegscheiben festgeschraubt, welche mit Silikon in einem passenden Loch verklebt wurden.
 
 ## Bau der Hardware
+
+---
+
 Wir sind wie folgt vorgegangen:
+
 1. einzelne LED vom Strip abschneiden und mit 3 Kabeln verbinden. Wir haben jeweils 7 LEDs in einen String verbunden. Auf Aus- / Eingang der LEDs achten! Der Ausgang der letzten LED wird in den Eingang der nächsten Reihe angelötet. Wichtig ist dabei, dass alle Eingänge auf der linken Seite beginnen! _TODO Bild_
 2. KG-Rohr in 3 - 4 cm starke Abschnitte teilen (42 Stück)
 3. Rohrstücken mit Heißkleber zu einer 6x7 Matrix verbinden
@@ -53,37 +136,9 @@ Wir sind wie folgt vorgegangen:
 10. Rohrmatrix von hinten einlassen
 11. Rückwand mit LEDS von hinten einlassen und mit Winkeln gegen ein Rausfallen sichern.
 
-## Wie man das projekt nuzt
-
-ESP32 mit Micropython
-
-Visual Studio Code mit pymakr
-
-Zunächst muss die Notwendige Firmware (micropython mit ulab) auf den ESP Microcontroller geflasht werden. Sie kann aus dem Ordner ``firmware`` gedownloadet werden oder unter [Micropython aufsetzten](https://github.com/SachsenBahner/VierGewinnt?tab=readme-ov-file#mircopython-aufsetzten) selbst erstellt werden.
-
-Anschließend müssen die notwendigen Dateien für das Vier-gewinnt übertragen werden.
-
-## Dateien übertragen
-
-Zum Übertragen der am PC erstellten Python Dateien empfiehlt sich das Pyboard Tool. Es werden die beiden Dateien main.py, ki.py sowie spiellogik.py übetragen. 
-```
-python pyboard.py --device COM15 -f cp VierGewinnt/main.py :
-python pyboard.py --device COM15 -f cp VierGewinnt/spiellogik.py :
-python pyboard.py --device COM15 -f cp VierGewinnt/ki.py :
-
-python pyboard.py --device COM15 -f ls
-
-ls :
-         139 boot.py
-        6319 main.py
-        4131 spiellogik.py
-
-```
-
-Mit einem ``python pyboard.py --device COM15 main.py`` kann das Programm ausgeführt werden. Nach einem neuen Boot des Boards führt sich das Programm ebenfalls automatisch aus. Es sollte vollständig rot leuchten, dann kann mit den zweiten Taster die Farbe gewechselt werden.
-
-
 ## Mircopython aufsetzten
+
+---
 
 Micropython mit ulab ist wie Numpy nur für Mircocontroller. Einen fertig compilierten Build gibt es im Ordner ``firmware``.
 
@@ -167,18 +222,16 @@ Anschließend wird mit ``esptool `` der ESP Flash bereinigt und die neue Firmwar
 esptool.py -p (PORT) erase_flash
 
 esptool.py -p /dev/ttyUSB0 -b 460800 --before default_reset --after no_reset --chip esp32s3  write_flash --flash_mode dio --flash_size 32MB --flash_freq 80m 0x0 build-ESP32_GENERIC_S3/bootloader/bootloader.bin 0x8000 build-ESP32_GENERIC_S3/partition_table/partition-table.bin 0x10000 build-ESP32_GENERIC_S3/micropython.bin
-
-
 ```
 
 Leider funktioniert der Octal PSRAM mit dieser Konfiguration nicht.
 
+## Contributing
 
-## Mitwirken
 Ursprünglich sollte die Eingabe mit Touchsensoren erfolgen. Dafür empfiehlt es sich aber, runde Platinenstücke gemäß dem [Datenblatt](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/touch_pad.html) von Espressif anzufertigen und dann mit der Dicke des Isolators zu experimentieren (es wird ein Plattenkondensator realisiert). Gern kann dieses Feature implementiert werden. Auch sind andere Algorithem für eine KI denkbar. 
 
-
 ## Weitere Ressourcen
+
 - [Quelle wheel-Funktion für die Farbauswahl](https://randomnerdtutorials.com/micropython-ws2812b-addressable-rgb-leds-neopixel-esp32-esp8266/)
 
 - [Micropython ESP Handbuch](https://docs.micropython.org/en/latest/esp32/quickref.html#neopixel-and-apa106-driver)

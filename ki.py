@@ -45,7 +45,7 @@ class KI:
             if window[i] == player and window[i + 1] == player:
                 vertical_score += 5
         score += vertical_score
-        
+
         return score
 
 
@@ -54,14 +54,8 @@ class KI:
         score = 0
 
         # Score center column
-<<<<<<< Updated upstream
-        center_array = board[:, 3]
-        center_count = np.sum(center_array == player)
-
-=======
         center_array = [int(i) for i in list(board[:, 3])]
         center_count = center_array.count(player)
->>>>>>> Stashed changes
         score += center_count * 3
 
         # Score Horizontal
@@ -73,12 +67,7 @@ class KI:
 
         # Score Vertical
         for c in range(7):
-<<<<<<< Updated upstream
-            col_array = board[:, c]
-
-=======
             col_array = [int(i) for i in list(board[:, c])]
->>>>>>> Stashed changes
             for r in range(3):
                 window = col_array[r:r + 4]
                 score += KI._evaluate_window(window, player)
@@ -142,12 +131,7 @@ class KI:
                     return (None, 100000000000000)
                 elif KI._check_winner(board, 1):
                     return (None, -100000000000000)
-<<<<<<< Updated upstream
-
-                else:
-=======
                 else:  # Game is over, no more valid moves
->>>>>>> Stashed changes
                     return (None, 0)
             else:  # Depth is zero
                 return (None, KI._score_position(board, 2))
@@ -155,7 +139,6 @@ class KI:
         if maximizingPlayer:
             value = -Inf
             column = random.choice(valid_locations)
-
             for col in valid_locations:
                 row = KI._get_next_open_row(board, col)
                 if row != -1:
@@ -225,15 +208,6 @@ class KI:
 
         return False
 
-<<<<<<< Updated upstream
-
-    def get_spalte(self, board):
-        depth = 2
-        minimax = KI._minimax(board, depth, -100000000000000, 100000000000000, True)
-        return minimax[0]
-
-=======
     @staticmethod
     def _drop_piece(board, row, col, piece):
         board[row][col] = piece
->>>>>>> Stashed changes

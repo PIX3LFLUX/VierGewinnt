@@ -1,10 +1,13 @@
 from ulab import numpy as np
 
+
+
 # Gewinnmatrixen
 #spieler1Vec = np.array([1,1,1,1], dtype=np.int8)
 #spieler2Vec = np.array([2,2,2,2], dtype=np.int8)
 
 class Spielfeld():
+    
 
     # Die Klasse Spielfeld füllt automatisch die aktuelle Spalte, in die geworfen wird
     # Es wird geprüft, ob die Zeile, Spalte oder Diagonale die Bedingung 4 in einer Reihe erfüllt
@@ -138,7 +141,7 @@ class Spielfeld():
             
             # wenn nicht, weiter spielen
             return self.spielfeld, 0
-        
+      
 
     def reset(self):                                # setzt das Spielfeld zurück
         self.spielfeld = np.zeros((6,7), dtype=np.int8)

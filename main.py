@@ -348,12 +348,18 @@ def spielzug() -> bool:
     
     elif ergebnis[1] == -2:
         # unentschieden
+        update_neopixel(ergebnis[0])
 
-        # lasse von oben nach unten alle Pixel verscwinden
+        time.sleep(1)
+
+        # lasse von oben nach unten alle Pixel verscwinden       
+        
         for i in range(6):
             for j in range(7):
                 pixel[j+7*i] = (0, 0, 0, 0) # alle Pixel aus
-
+                
+            pixel.write()
+            time.sleep(0.6)
         return True
 
     else:
