@@ -1,14 +1,13 @@
 <div align="center">
   <h1 align="center">Vier Gewinnt</h1>
   <h3>Kinderspiel auf einer LED Matrix mit KI Gegner</h3>
+  ![Bilder](/bilder/_DSF4458.jpg?raw=true "Titelbild")
 </div>
 
 Das ist eine Implementierung des Spiels '4-Gewinnt' mit einem KI Gegner auf einer LED Matrix im Rahmen einer Projektarbeit an der Hochschule Karlsruhe. Die einzelnen Spalten werden über Taster ausgewählt. Die Außenmaße der dargestellten Lösung betragen circa 1 m x 1 m.
 Es gibt einen Modus PvP, PvE und EvE. Als KI Gegner wird ein Alpha-Beta Algorithmus verwendet.
 
 ## Features
-
----
 
 - Spieler können Ihre Farbe auswählen
 
@@ -19,8 +18,6 @@ Es gibt einen Modus PvP, PvE und EvE. Als KI Gegner wird ein Alpha-Beta Algorith
 - Wenn das Spielfeld voll ist, ohne das jemand gewonnen hat, wird das ebenfalls erkannt.
 
 ## Quick Start
-
----
 
 Du benötigst folgendes, um das Spiel nachbauen zu können:
 
@@ -87,15 +84,13 @@ Nach einem neuen Boot des Boards führt sich das Programm ebenfalls automatisch 
 
 ## Bedienung
 
----
-
 - Farbe kann mit dem 2. Taster von links oder rechts jeweils im Farbspektrum verschoben werden
 - Durch gleichzeitiges Drücken der Taster ganz außen lässt sich die Farbauswahl bestätigen oder nach einem Sieg / Unentschieden ein neues Spiel starten.
 - Mit der gleichen Bedienung kann zwischen Player und KI gewählt werden
 
-## Detailiertere Beschreibung
-
 ---
+
+## Detailiertere Beschreibung
 
 ## Was wird benötigt
 
@@ -120,8 +115,6 @@ Die Taster wurden auf Unterlegscheiben festgeschraubt, welche mit Silikon in ein
 
 ## Bau der Hardware
 
----
-
 Wir sind wie folgt vorgegangen:
 
 1. einzelne LED vom Strip abschneiden und mit 3 Kabeln verbinden. Wir haben jeweils 7 LEDs in einen String verbunden. Auf Aus- / Eingang der LEDs achten! Der Ausgang der letzten LED wird in den Eingang der nächsten Reihe angelötet. Wichtig ist dabei, dass alle Eingänge auf der linken Seite beginnen! _TODO Bild_
@@ -137,8 +130,6 @@ Wir sind wie folgt vorgegangen:
 11. Rückwand mit LEDS von hinten einlassen und mit Winkeln gegen ein Rausfallen sichern.
 
 ## Mircopython aufsetzten
-
----
 
 Micropython mit ulab ist wie Numpy nur für Mircocontroller. Einen fertig compilierten Build gibt es im Ordner ``firmware``.
 
