@@ -142,7 +142,37 @@ Wir sind wie folgt vorgegangen:
 
 ### Spiellogik
 
+Gewinnprüfung
+Die Gewinnprüfung erfolgt durch die Anwendung von Filtern auf das Spielfeld für horizontale, vertikale und diagonale Gewinnmuster. Die Funktion _korrelation wird verwendet, um zu prüfen, ob vier Spielsteine in einer Reihe vorhanden sind.
+
+Spielzug
+Die Funktion wurf ermöglicht es einem Spieler, einen Spielstein in eine bestimmte Spalte zu werfen. Die Funktion überprüft, ob der Spielzug gültig ist, und prüft dann, ob dieser Spielzug zu einem Gewinner führt oder das Spielfeld noch weiter gespielt werden kann.
+
+Reset und Spielfeld anzeigen
+Die Funktion reset setzt das Spielfeld zurück, und gib_spielfeld gibt das aktuelle Spielfeld zurück.
+
 ### Alpha-Beta Algorithmus
+
+Der Alpha-Beta-Algorithmus wurde für die Implementierung der Künstlichen Intelligenz (KI) in diesem Vier-Gewinnt-Spiel gewählt, da er eine effiziente Methode für die Suche im Entscheidungsbaum bietet. Im Vergleich zu anderen Suchalgorithmen, wie dem Minimax-Algorithmus, reduziert der Alpha-Beta-Algorithmus die Anzahl der zu untersuchenden Knoten erheblich, indem er bestimmte Teilbäume ausschließt, die nicht weiter analysiert werden müssen.
+
+Code-Struktur
+Klasse: KI
+Die Klasse KI enthält Methoden zur Bewertung der Spielposition, zur Entscheidungsfindung und zum Spielzug der KI.
+
+Methode: _evaluate_window
+Bewertet einen Ausschnitt des Spielfelds für einen Spieler und weist Punkte für verschiedene Bedingungen zu.
+
+Methode: _score_position
+Bewertet die gesamte Spielposition anhand verschiedener Muster und ruft _evaluate_window für relevante Ausschnitte auf.
+
+Methode: _minimax
+Verwendet den Minimax-Algorithmus, um den besten Zug für die KI zu finden.
+
+Methode: choose_best_move
+Schnittstelle für den externen Aufruf, um den besten Zug für die KI auszuwählen.
+
+Weitere Hilfsmethoden
+Enthält Hilfsmethoden für Aufgaben wie das Überprüfen eines Gewinners oder die Gültigkeit von Zügen.
 
 ## Micropython aufsetzten
 
