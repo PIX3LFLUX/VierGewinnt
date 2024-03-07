@@ -140,7 +140,7 @@ Wir sind wie folgt vorgegangen:
 
 ## Software Architektur
 
-### Spiellogik
+## Spiellogik
 
 Gewinnprüfung
 Die Gewinnprüfung erfolgt durch die Anwendung von Filtern auf das Spielfeld für horizontale, vertikale und diagonale Gewinnmuster. Die Funktion _korrelation wird verwendet, um zu prüfen, ob vier Spielsteine in einer Reihe vorhanden sind.
@@ -151,7 +151,7 @@ Die Funktion wurf ermöglicht es einem Spieler, einen Spielstein in eine bestimm
 Reset und Spielfeld anzeigen
 Die Funktion reset setzt das Spielfeld zurück, und gib_spielfeld gibt das aktuelle Spielfeld zurück.
 
-### Alpha-Beta Algorithmus
+## Alpha-Beta Algorithmus
 
 Der Alpha-Beta-Algorithmus wurde für die Implementierung der Künstlichen Intelligenz (KI) in diesem Vier-Gewinnt-Spiel gewählt, da er eine effiziente Methode für die Suche im Entscheidungsbaum bietet. Im Vergleich zu anderen Suchalgorithmen, wie dem Minimax-Algorithmus, reduziert der Alpha-Beta-Algorithmus die Anzahl der zu untersuchenden Knoten erheblich, indem er bestimmte Teilbäume ausschließt, die nicht weiter analysiert werden müssen.
 
