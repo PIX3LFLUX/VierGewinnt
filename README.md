@@ -95,7 +95,7 @@ Nach einem neuen Boot des Boards führt sich das Programm ebenfalls automatisch 
 
 ## Blockschaltbild
 
-
+  ![Bilder](/bilder/Blockschaltbild.PNG?raw=true "Blockschaltbild")
 
 ## Was wird benötigt
 
