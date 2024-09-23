@@ -24,7 +24,7 @@ This is a custom **Connect Four (Vier Gewinnt)** game implemented using a **Rasp
 
 1. **Clone this repository**:
    ```bash
-   git clone https://github.com/yourusername/viergewinnt
+   git clone https://github.com/PIX3LFLUX/VierGewinnt
    cd viergewinnt
 
 2. **Set up Python virtual environment:**
