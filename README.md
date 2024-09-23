@@ -1,10 +1,6 @@
-<div align="center">
-  <h1 align="center">Vier Gewinnt</h1>
-</div>
+# Connect Four Game with Raspberry Pi and NeoPixel Display
 
   ![Bilder](/bilder/_DSF4458.jpg?raw=true "Titelbild")
-
-# Connect Four Game with Raspberry Pi and NeoPixel Display
 
 This is a custom **Connect Four (Vier Gewinnt)** game implemented using a **Raspberry Pi** and a **NeoPixel LED display**. The game allows two human players, or AI opponents, to compete in a dynamic game of Connect Four.
 
